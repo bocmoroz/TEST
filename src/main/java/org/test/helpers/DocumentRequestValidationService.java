@@ -1,7 +1,12 @@
 package org.test.helpers;
 
 import org.springframework.stereotype.Component;
-import org.test.dto.*;
+import org.test.dto.income.ProductIncomeDto;
+import org.test.dto.income.WarehouseIncomeBuilderDto;
+import org.test.dto.sale.ProductSaleDto;
+import org.test.dto.sale.WarehouseSaleBuilderDto;
+import org.test.dto.transportation.ProductTransportationDto;
+import org.test.dto.transportation.WarehouseTransportationBuilderDto;
 import org.test.exception.WarehouseIncomeValidationException;
 import org.test.exception.WarehouseTransportationValidationException;
 
@@ -11,14 +16,14 @@ import java.util.stream.Collectors;
 @Component
 public class DocumentRequestValidationService {
 
-    public void validateProductIncomeRequest(WarehouseIncomeDto warehouseIncomeDto) {
+    public void validateProductIncomeRequest(WarehouseIncomeBuilderDto warehouseIncomeBuilderDto) {
 
-        if (warehouseIncomeDto.getWarehouseName() == null || warehouseIncomeDto.getProducts() == null
-                || warehouseIncomeDto.getProducts().isEmpty()) {
+        if (warehouseIncomeBuilderDto.getWarehouseName() == null || warehouseIncomeBuilderDto.getProducts() == null
+                || warehouseIncomeBuilderDto.getProducts().isEmpty()) {
             throw new WarehouseIncomeValidationException("Неправильный запрос на добавление поступления продуктов!");
         }
 
-        List<ProductIncomeDto> list = warehouseIncomeDto.getProducts().stream()
+        List<ProductIncomeDto> list = warehouseIncomeBuilderDto.getProducts().stream()
                 .filter(p -> p.getArticul() == null)
                 .filter(p -> p.getArticul().isEmpty())
                 .filter(p -> p.getName() == null)
@@ -35,14 +40,14 @@ public class DocumentRequestValidationService {
 
     }
 
-    public void validateProductSaleRequest(WarehouseSaleDto warehouseSaleDto) {
+    public void validateProductSaleRequest(WarehouseSaleBuilderDto warehouseSaleBuilderDto) {
 
-        if (warehouseSaleDto.getWarehouseName() == null || warehouseSaleDto.getProducts() == null
-                || warehouseSaleDto.getProducts().isEmpty()) {
+        if (warehouseSaleBuilderDto.getWarehouseName() == null || warehouseSaleBuilderDto.getProducts() == null
+                || warehouseSaleBuilderDto.getProducts().isEmpty()) {
             throw new WarehouseIncomeValidationException("Неправильный запрос на добавление продажи продуктов!");
         }
 
-        List<ProductSaleDto> list = warehouseSaleDto.getProducts().stream()
+        List<ProductSaleDto> list = warehouseSaleBuilderDto.getProducts().stream()
                 .filter(p -> p.getArticul() == null)
                 .filter(p -> p.getArticul().isEmpty())
                 .filter(p -> p.getName() == null)
@@ -59,16 +64,16 @@ public class DocumentRequestValidationService {
 
     }
 
-    public void validateProductTransportationRequest(WarehouseTransportationDto warehouseTransportationDto) {
+    public void validateProductTransportationRequest(WarehouseTransportationBuilderDto warehouseTransportationBuilderDto) {
 
-        if (warehouseTransportationDto.getWarehouseNameFrom() == null
-                || warehouseTransportationDto.getWarehouseNameTo() == null
-                || warehouseTransportationDto.getProducts() == null
-                || warehouseTransportationDto.getProducts().isEmpty()) {
+        if (warehouseTransportationBuilderDto.getWarehouseNameFrom() == null
+                || warehouseTransportationBuilderDto.getWarehouseNameTo() == null
+                || warehouseTransportationBuilderDto.getProducts() == null
+                || warehouseTransportationBuilderDto.getProducts().isEmpty()) {
             throw new WarehouseTransportationValidationException("Неправильный запрос на добавление перемещения продуктов!");
         }
 
-        List<ProductTransportationDto> list = warehouseTransportationDto.getProducts().stream()
+        List<ProductTransportationDto> list = warehouseTransportationBuilderDto.getProducts().stream()
                 .filter(p -> p.getArticul() == null)
                 .filter(p -> p.getArticul().isEmpty())
                 .filter(p -> p.getName() == null)

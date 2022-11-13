@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.test.dto.ResponseDto;
-import org.test.dto.WarehouseSaleDto;
+import org.test.dto.sale.WarehouseSaleBuilderDto;
+import org.test.dto.sale.WarehouseSaleDto;
 import org.test.entity.WarehouseSale;
 import org.test.exception.WarehouseSaleValidationException;
 import org.test.helpers.DocumentRequestValidationService;
@@ -80,14 +81,15 @@ public class WarehouseSaleController {
 
     @PostMapping(path = "/import")
     public ResponseEntity<ResponseDto<WarehouseSaleDto>> addNewWarehouseSale(
-            @RequestBody WarehouseSaleDto warehouseSaleDto) {
+            @RequestBody WarehouseSaleBuilderDto warehouseSaleBuilderDto) {
 
         ResponseDto<WarehouseSaleDto> responseDto;
 
         try {
-            log.info("warehouseSale {}", warehouseSaleDto);
-            requestValidationService.validateProductSaleRequest(warehouseSaleDto);
-            WarehouseSale addedWarehouseSale = warehouseSaleService.addNewWarehouseSale(warehouseSaleDto);
+            log.info("warehouseSale {}", warehouseSaleBuilderDto);
+            requestValidationService.validateProductSaleRequest(warehouseSaleBuilderDto);
+            WarehouseSale addedWarehouseSale = warehouseSaleService
+                    .addNewWarehouseSale(warehouseSaleBuilderDto.getWarehouseName(), warehouseSaleBuilderDto.getProducts());
             WarehouseSaleDto addedWarehouseSaleDto = WarehouseSaleDto.create(addedWarehouseSale);
             log.info("addedWarehouseSale {}", addedWarehouseSaleDto);
             responseDto = new ResponseDto<>(0, "Продажа продуктов успешно добавлена!",

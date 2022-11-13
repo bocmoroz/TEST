@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.test.dto.ResponseDto;
-import org.test.dto.WarehouseIncomeDto;
+import org.test.dto.income.WarehouseIncomeBuilderDto;
+import org.test.dto.income.WarehouseIncomeDto;
 import org.test.entity.WarehouseIncome;
 import org.test.exception.WarehouseIncomeValidationException;
 import org.test.helpers.DocumentRequestValidationService;
@@ -81,14 +82,15 @@ public class WarehouseIncomeController {
 
     @PostMapping(path = "/import")
     public ResponseEntity<ResponseDto<WarehouseIncomeDto>> addNewWarehouseIncome(
-            @RequestBody WarehouseIncomeDto warehouseIncomeDto) {
+            @RequestBody WarehouseIncomeBuilderDto warehouseIncomeBuilderDto) {
 
         ResponseDto<WarehouseIncomeDto> responseDto;
 
         try {
-            log.info("warehouseIncome {}", warehouseIncomeDto);
-            requestValidationService.validateProductIncomeRequest(warehouseIncomeDto);
-            WarehouseIncome addedWarehouseIncome = warehouseIncomeService.addNewWarehouseIncome(warehouseIncomeDto);
+            log.info("warehouseIncome {}", warehouseIncomeBuilderDto);
+            requestValidationService.validateProductIncomeRequest(warehouseIncomeBuilderDto);
+            WarehouseIncome addedWarehouseIncome = warehouseIncomeService
+                    .addNewWarehouseIncome(warehouseIncomeBuilderDto.getWarehouseName(), warehouseIncomeBuilderDto.getProducts());
             WarehouseIncomeDto addedWarehouseIncomeDto = WarehouseIncomeDto.create(addedWarehouseIncome);
             log.info("addedWarehouseIncome {}", addedWarehouseIncomeDto);
             responseDto = new ResponseDto<>(0, "Поступление продуктов успешно добавлено!",

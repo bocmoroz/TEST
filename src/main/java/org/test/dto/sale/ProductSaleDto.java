@@ -1,9 +1,9 @@
-package org.test.dto;
+package org.test.dto.sale;
 
 import lombok.Data;
 
 @Data
-public class ProductIncomeDto {
+public class ProductSaleDto {
 
     private String articul;
     private String name;

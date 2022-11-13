@@ -1,13 +1,12 @@
-package org.test.dto;
+package org.test.dto.warehouse;
 
 import lombok.Data;
 
 @Data
-public class ProductSaleDto {
+public class WarehouseProductDto {
 
     private String articul;
     private String name;
-    private Long price;
     private Integer count;
 
 }

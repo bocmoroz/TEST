@@ -46,7 +46,7 @@ public class ProductService {
     public Product addNewProduct(Product product) {
         List<Product> products = productRepository.findProductByArticul(product.getArticul());
         if (!products.isEmpty()) {
-            throw new ProductValidationException("Такой артикул уже существует!");
+            throw new ProductValidationException("Артикул " + product.getArticul() + " уже существует!");
         }
 
         product.setDeleted(false);

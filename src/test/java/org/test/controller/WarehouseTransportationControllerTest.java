@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.test.dto.ResponseDto;
-import org.test.dto.WarehouseTransportationDto;
+import org.test.dto.transportation.WarehouseTransportationBuilderDto;
+import org.test.dto.transportation.WarehouseTransportationDto;
 import org.test.entity.Warehouse;
 import org.test.entity.WarehouseTransportation;
 import org.test.exception.WarehouseTransportationValidationException;
@@ -127,13 +128,11 @@ public class WarehouseTransportationControllerTest {
 
     @Test
     public void getWarehouseTransportationByIdTestFailInternalError() {
-        WarehouseTransportation warehouseTransportation = new WarehouseTransportation();
-
-        Mockito.when(warehouseTransportationService.getWarehouseTransportationById(warehouseTransportation.getId()))
+        Mockito.when(warehouseTransportationService.getWarehouseTransportationById(Mockito.any()))
                 .thenThrow(new RuntimeException("Внутренняя ошибка"));
 
         ResponseEntity<ResponseDto<WarehouseTransportationDto>> response =
-                warehouseTransportationController.getWarehouseTransportationById(warehouseTransportation.getId());
+                warehouseTransportationController.getWarehouseTransportationById(Mockito.any());
 
         Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -150,12 +149,11 @@ public class WarehouseTransportationControllerTest {
         warehouseTransportation.setProducts(new ArrayList<>());
         WarehouseTransportationDto warehouseTransportationDto = WarehouseTransportationDto.create(warehouseTransportation);
 
-        doNothing().when(requestValidationService).validateProductTransportationRequest(warehouseTransportationDto);
-        Mockito.when(warehouseTransportationService.addNewWarehouseTransportation(warehouseTransportationDto))
+        Mockito.when(warehouseTransportationService.addNewWarehouseTransportation(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(warehouseTransportation);
 
         ResponseEntity<ResponseDto<WarehouseTransportationDto>> response =
-                warehouseTransportationController.addNewWarehouseTransportation(warehouseTransportationDto);
+                warehouseTransportationController.addNewWarehouseTransportation(new WarehouseTransportationBuilderDto());
 
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -172,15 +170,14 @@ public class WarehouseTransportationControllerTest {
         warehouseTransportation.setProducts(new ArrayList<>());
         WarehouseTransportationDto warehouseTransportationDto = WarehouseTransportationDto.create(warehouseTransportation);
 
-        doNothing().when(requestValidationService).validateProductTransportationRequest(warehouseTransportationDto);
-        Mockito.when(warehouseTransportationService.addNewWarehouseTransportation(warehouseTransportationDto))
+        Mockito.when(warehouseTransportationService.addNewWarehouseTransportation(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenThrow(new WarehouseTransportationValidationException(
                         "Склада с именем "
                                 + warehouseTransportationDto.getWarehouseNameFrom()
                                 + " не существует!"));
 
         ResponseEntity<ResponseDto<WarehouseTransportationDto>> response =
-                warehouseTransportationController.addNewWarehouseTransportation(warehouseTransportationDto);
+                warehouseTransportationController.addNewWarehouseTransportation(new WarehouseTransportationBuilderDto());
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -193,18 +190,11 @@ public class WarehouseTransportationControllerTest {
 
     @Test
     public void addNewWarehouseTransportationTestFailInternalError() {
-        WarehouseTransportation warehouseTransportation = new WarehouseTransportation();
-        warehouseTransportation.setWarehouseFrom(new Warehouse());
-        warehouseTransportation.setWarehouseTo(new Warehouse());
-        warehouseTransportation.setProducts(new ArrayList<>());
-        WarehouseTransportationDto warehouseTransportationDto = WarehouseTransportationDto.create(warehouseTransportation);
-
-        doNothing().when(requestValidationService).validateProductTransportationRequest(warehouseTransportationDto);
-        Mockito.when(warehouseTransportationService.addNewWarehouseTransportation(warehouseTransportationDto))
+        Mockito.when(warehouseTransportationService.addNewWarehouseTransportation(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenThrow(new RuntimeException("Внутренняя ошибка"));
 
         ResponseEntity<ResponseDto<WarehouseTransportationDto>> response =
-                warehouseTransportationController.addNewWarehouseTransportation(warehouseTransportationDto);
+                warehouseTransportationController.addNewWarehouseTransportation(new WarehouseTransportationBuilderDto());
 
         Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         Assert.assertNotNull(response.getBody());

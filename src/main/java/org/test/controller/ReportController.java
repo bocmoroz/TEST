@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.test.dto.LeftoverReportDto;
-import org.test.dto.ProductReportDto;
 import org.test.dto.ResponseDto;
-import org.test.entity.Product;
-import org.test.entity.Warehouse;
+import org.test.dto.leftover.LeftoverReportDto;
+import org.test.dto.product.ProductDto;
+import org.test.dto.warehouse.WarehouseDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,26 +34,16 @@ public class ReportController {
     }
 
     @GetMapping("/products/json")
-    public ResponseEntity<ResponseDto<List<ProductReportDto>>> getProductsReport() {
+    public ResponseEntity<ResponseDto<List<ProductDto>>> getProductsReport() {
 
-        ResponseDto<List<ProductReportDto>> responseDto;
+        ResponseDto<List<ProductDto>> responseDto;
 
-        List<Product> productList = productController.getProducts().getBody().getBody();
+        List<ProductDto> productDtoList = productController.getProducts().getBody().getBody();
 
-        if (productList == null) {
+        if (productDtoList == null) {
             responseDto = new ResponseDto<>(2, "Ошибка при получении продуктов!", null);
             return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        List<ProductReportDto> productDtoList = productList.stream()
-                .map(product -> {
-                    ProductReportDto dto = new ProductReportDto();
-                    dto.setArticul(product.getArticul());
-                    dto.setName(product.getName());
-                    dto.setLastIncomePrice(product.getLastIncomePrice());
-                    dto.setLastSalePrice(product.getLastSalePrice());
-                    return dto;
-                }).collect(Collectors.toList());
 
         responseDto = new ResponseDto<>(0, "Отчёт успешно получен!", productDtoList);
 
@@ -64,23 +53,17 @@ public class ReportController {
     }
 
     @GetMapping("/products/{productArticul}/json")
-    public ResponseEntity<ResponseDto<ProductReportDto>> getProductByArticulReport(
+    public ResponseEntity<ResponseDto<ProductDto>> getProductByArticulReport(
             @PathVariable("productArticul") String productArticul) {
 
-        ResponseDto<ProductReportDto> responseDto;
+        ResponseDto<ProductDto> responseDto;
 
-        Product product = productController.getProductByArticle(productArticul).getBody().getBody();
+        ProductDto productDto = productController.getProductByArticle(productArticul).getBody().getBody();
 
-        if (product == null) {
+        if (productDto == null) {
             responseDto = new ResponseDto<>(2, "Ошибка при получении продукта!", null);
             return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        ProductReportDto productDto = new ProductReportDto();
-        productDto.setArticul(product.getArticul());
-        productDto.setName(product.getName());
-        productDto.setLastIncomePrice(product.getLastIncomePrice());
-        productDto.setLastSalePrice(product.getLastSalePrice());
 
         responseDto = new ResponseDto<>(0, "Отчёт успешно получен!", productDto);
 
@@ -97,7 +80,7 @@ public class ReportController {
 
         ResponseDto<List<LeftoverReportDto>> responseDto;
 
-        List<Warehouse> warehouseList = warehouseController.getWarehouses().getBody().getBody();
+        List<WarehouseDto> warehouseList = warehouseController.getWarehouses().getBody().getBody();
 
         if (warehouseList == null) {
             responseDto = new ResponseDto<>(2, "Ошибка при получении складов!", null);
@@ -106,19 +89,19 @@ public class ReportController {
 
         List<LeftoverReportDto> leftoverReportDtoList = new ArrayList<>();
 
-        warehouseList.forEach(wh -> wh.getProducts().forEach(productCount -> {
+        warehouseList.forEach(wh -> wh.getProducts().forEach(warehouseProductDto -> {
 
             Optional<LeftoverReportDto> optionalLeftoverReportDto = leftoverReportDtoList.stream()
-                    .filter(p -> p.getArticul().equals(productCount.getProduct().getArticul())).findAny();
+                    .filter(p -> p.getArticul().equals(warehouseProductDto.getArticul())).findAny();
 
             if (optionalLeftoverReportDto.isPresent()) {
                 LeftoverReportDto leftoverReportDto = optionalLeftoverReportDto.get();
-                leftoverReportDto.setCount(leftoverReportDto.getCount() + productCount.getCount());
+                leftoverReportDto.setCount(leftoverReportDto.getCount() + warehouseProductDto.getCount());
             } else {
                 LeftoverReportDto dto = new LeftoverReportDto();
-                dto.setArticul(productCount.getProduct().getArticul());
-                dto.setName(productCount.getProduct().getName());
-                dto.setCount(productCount.getCount());
+                dto.setArticul(warehouseProductDto.getArticul());
+                dto.setName(warehouseProductDto.getName());
+                dto.setCount(warehouseProductDto.getCount());
                 leftoverReportDtoList.add(dto);
             }
         }));
@@ -136,19 +119,19 @@ public class ReportController {
 
         ResponseDto<List<LeftoverReportDto>> responseDto;
 
-        Warehouse warehouse = warehouseController.getWarehouseByName(warehouseName).getBody().getBody();
+        WarehouseDto warehouseDto = warehouseController.getWarehouseByName(warehouseName).getBody().getBody();
 
-        if (warehouse == null) {
+        if (warehouseDto == null) {
             responseDto = new ResponseDto<>(2, "Ошибка при получении склада!", null);
             return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        List<LeftoverReportDto> leftoverReportDtoList = warehouse.getProducts().stream()
-                .map(productCount -> {
+        List<LeftoverReportDto> leftoverReportDtoList = warehouseDto.getProducts().stream()
+                .map(warehouseProductDto -> {
                     LeftoverReportDto dto = new LeftoverReportDto();
-                    dto.setArticul(productCount.getProduct().getArticul());
-                    dto.setName(productCount.getProduct().getName());
-                    dto.setCount(productCount.getCount());
+                    dto.setArticul(warehouseProductDto.getArticul());
+                    dto.setName(warehouseProductDto.getName());
+                    dto.setCount(warehouseProductDto.getCount());
                     return dto;
                 }).collect(Collectors.toList());
 

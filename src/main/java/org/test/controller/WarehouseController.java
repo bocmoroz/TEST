@@ -6,12 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.test.dto.ResponseDto;
+import org.test.dto.warehouse.WarehouseBuilderDto;
+import org.test.dto.warehouse.WarehouseDto;
 import org.test.entity.Warehouse;
 import org.test.exception.WarehouseValidationException;
 import org.test.helpers.EntityRequestValidationService;
 import org.test.service.WarehouseService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -28,14 +31,17 @@ public class WarehouseController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<List<Warehouse>>> getWarehouses() {
+    public ResponseEntity<ResponseDto<List<WarehouseDto>>> getWarehouses() {
 
-        ResponseDto<List<Warehouse>> responseDto;
+        ResponseDto<List<WarehouseDto>> responseDto;
 
         try {
             List<Warehouse> listWarehouses = warehouseService.getWarehouses();
-            log.info("warehouses {}", listWarehouses);
-            responseDto = new ResponseDto<>(0, "Склады успешно получены!", listWarehouses);
+            List<WarehouseDto> listWarehousesDto = listWarehouses.stream()
+                    .map(WarehouseDto::create)
+                    .collect(Collectors.toList());
+            log.info("warehouses {}", listWarehousesDto);
+            responseDto = new ResponseDto<>(0, "Склады успешно получены!", listWarehousesDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (WarehouseValidationException e) {
             log.error("exception", e);
@@ -49,15 +55,16 @@ public class WarehouseController {
     }
 
     @GetMapping(path = "/warehouse")
-    public ResponseEntity<ResponseDto<Warehouse>> getWarehouseByName(
+    public ResponseEntity<ResponseDto<WarehouseDto>> getWarehouseByName(
             @RequestParam String name) {
 
-        ResponseDto<Warehouse> responseDto;
+        ResponseDto<WarehouseDto> responseDto;
 
         try {
             Warehouse warehouse = warehouseService.getWarehouseByName(name);
-            log.info("warehouse {}", warehouse);
-            responseDto = new ResponseDto<>(0, "Склад успешно получен!", warehouse);
+            WarehouseDto warehouseDto = WarehouseDto.create(warehouse);
+            log.info("warehouse {}", warehouseDto);
+            responseDto = new ResponseDto<>(0, "Склад успешно получен!", warehouseDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (WarehouseValidationException e) {
             log.error("exception", e);
@@ -71,16 +78,19 @@ public class WarehouseController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<ResponseDto<Warehouse>> addNewWarehouse(@RequestBody Warehouse warehouse) {
+    public ResponseEntity<ResponseDto<WarehouseBuilderDto>> addNewWarehouse(
+            @RequestBody WarehouseBuilderDto warehouseBuilderDto) {
 
-        ResponseDto<Warehouse> responseDto;
+        ResponseDto<WarehouseBuilderDto> responseDto;
 
         try {
-            log.info("warehouse {}", warehouse);
-            entityRequestValidationService.validateWarehouseAddRequest(warehouse.getName());
+            log.info("warehouse {}", warehouseBuilderDto);
+            entityRequestValidationService.validateWarehouseAddRequest(warehouseBuilderDto.getName());
+            Warehouse warehouse = new Warehouse(warehouseBuilderDto.getName());
             Warehouse addedWarehouse = warehouseService.addNewWarehouse(warehouse);
-            log.info("addedWarehouse {}", addedWarehouse);
-            responseDto = new ResponseDto<>(0, "Склад успешно добавлен!", addedWarehouse);
+            WarehouseBuilderDto addedWarehouseBuilderDto = WarehouseBuilderDto.create(addedWarehouse);
+            log.info("addedWarehouse {}", addedWarehouseBuilderDto);
+            responseDto = new ResponseDto<>(0, "Склад успешно добавлен!", addedWarehouseBuilderDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (WarehouseValidationException e) {
             log.error("exception", e);
@@ -95,17 +105,18 @@ public class WarehouseController {
     }
 
     @PutMapping(path = "/update/{warehouseName}")
-    public ResponseEntity<ResponseDto<Warehouse>> updateWarehouse(
+    public ResponseEntity<ResponseDto<WarehouseDto>> updateWarehouse(
             @PathVariable("warehouseName") String warehouseName,
             @RequestParam(required = false) String newWarehouseName) {
 
-        ResponseDto<Warehouse> responseDto;
+        ResponseDto<WarehouseDto> responseDto;
 
         try {
             entityRequestValidationService.validateWarehouseUpdateRequest(warehouseName, newWarehouseName);
-            Warehouse warehouse = warehouseService.updateWarehouse(warehouseName, newWarehouseName);
-            log.info("warehouse {}", warehouse);
-            responseDto = new ResponseDto<>(0, "Имя склада успешно обновлено!", warehouse);
+            Warehouse updatedWarehouse = warehouseService.updateWarehouse(warehouseName, newWarehouseName);
+            WarehouseDto updatedWarehouseDto = WarehouseDto.create(updatedWarehouse);
+            log.info("warehouse {}", updatedWarehouseDto);
+            responseDto = new ResponseDto<>(0, "Имя склада успешно обновлено!", updatedWarehouseDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (WarehouseValidationException e) {
             log.error("exception", e);
@@ -119,15 +130,16 @@ public class WarehouseController {
     }
 
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDto<Warehouse>> deleteWarehouse(
+    public ResponseEntity<ResponseDto<WarehouseDto>> deleteWarehouse(
             @RequestParam(name = "deleteWarehouseName") String name) {
 
-        ResponseDto<Warehouse> responseDto;
+        ResponseDto<WarehouseDto> responseDto;
 
         try {
             Warehouse deletedWarehouse = warehouseService.deleteWarehouse(name);
-            log.info("deletedWarehouse {}", deletedWarehouse);
-            responseDto = new ResponseDto<>(0, "Склад успешно удалён!", deletedWarehouse);
+            WarehouseDto deletedWarehouseDto = WarehouseDto.create(deletedWarehouse);
+            log.info("deletedWarehouse {}", deletedWarehouseDto);
+            responseDto = new ResponseDto<>(0, "Склад успешно удалён!", deletedWarehouseDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (WarehouseValidationException e) {
             log.error("exception", e);

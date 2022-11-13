@@ -2,7 +2,7 @@ package org.test.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.test.dto.WarehouseTransportationDto;
+import org.test.dto.transportation.ProductTransportationDto;
 import org.test.entity.Product;
 import org.test.entity.ProductCount;
 import org.test.entity.Warehouse;
@@ -50,27 +50,28 @@ public class WarehouseTransportationService {
     }
 
     @Transactional
-    public WarehouseTransportation addNewWarehouseTransportation(WarehouseTransportationDto warehouseTransportationDto) {
+    public WarehouseTransportation addNewWarehouseTransportation(String warehouseNameFrom, String warehouseNameTo,
+                                                                 List<ProductTransportationDto> products) {
 
         Warehouse warehouseFrom =
-                warehouseService.getWarehouseByName(warehouseTransportationDto.getWarehouseNameFrom());
+                warehouseService.getWarehouseByName(warehouseNameFrom);
 
         if (warehouseFrom == null) {
             throw new WarehouseTransportationValidationException("Склада с именем "
-                    + warehouseTransportationDto.getWarehouseNameFrom()
+                    + warehouseNameFrom
                     + " не существует!");
         }
 
         Warehouse warehouseTo =
-                warehouseService.getWarehouseByName(warehouseTransportationDto.getWarehouseNameTo());
+                warehouseService.getWarehouseByName(warehouseNameTo);
 
         if (warehouseTo == null) {
             throw new WarehouseTransportationValidationException("Склада с именем "
-                    + warehouseTransportationDto.getWarehouseNameTo()
+                    + warehouseNameTo
                     + " не существует!");
         }
 
-        warehouseTransportationDto.getProducts().forEach(productTransportationDto -> {
+        products.forEach(productTransportationDto -> {
             Product product;
             product = productService.getProductByArticle(productTransportationDto.getArticul());
             if (product == null) {
@@ -123,7 +124,7 @@ public class WarehouseTransportationService {
         WarehouseTransportation warehouseTransportation = new WarehouseTransportation();
         warehouseTransportation.setWarehouseFrom(warehouseFrom);
         warehouseTransportation.setWarehouseTo(warehouseTo);
-        warehouseTransportation.setProducts(warehouseTransportationDto.getProducts().stream()
+        warehouseTransportation.setProducts(products.stream()
                 .map(productTransportationDto -> {
                     Product prod = productService.getProductByArticle(productTransportationDto.getArticul());
 

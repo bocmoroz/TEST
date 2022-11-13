@@ -1,4 +1,4 @@
-package org.test.dto;
+package org.test.dto.transportation;
 
 import lombok.Data;
 

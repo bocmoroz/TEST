@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.test.dto.ResponseDto;
-import org.test.dto.WarehouseIncomeDto;
+import org.test.dto.income.WarehouseIncomeBuilderDto;
+import org.test.dto.income.WarehouseIncomeDto;
 import org.test.entity.Warehouse;
 import org.test.entity.WarehouseIncome;
 import org.test.exception.WarehouseIncomeValidationException;
@@ -21,8 +22,6 @@ import org.test.service.WarehouseIncomeService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest(classes = {WarehouseIncomeController.class})
 @RunWith(SpringRunner.class)
@@ -124,15 +123,11 @@ public class WarehouseIncomeControllerTest {
 
     @Test
     public void getWarehouseIncomeByIdTestFailInternalError() {
-        WarehouseIncome warehouseIncome = new WarehouseIncome();
-        warehouseIncome.setWarehouse(new Warehouse());
-        warehouseIncome.setProducts(new ArrayList<>());
-
-        Mockito.when(warehouseIncomeService.getWarehouseIncomeById(warehouseIncome.getId()))
+        Mockito.when(warehouseIncomeService.getWarehouseIncomeById(Mockito.any()))
                 .thenThrow(new RuntimeException("Внутренняя ошибка"));
 
         ResponseEntity<ResponseDto<WarehouseIncomeDto>> response =
-                warehouseIncomeController.getWarehouseIncomeById(warehouseIncome.getId());
+                warehouseIncomeController.getWarehouseIncomeById(Mockito.any());
 
         Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -148,12 +143,10 @@ public class WarehouseIncomeControllerTest {
         warehouseIncome.setProducts(new ArrayList<>());
         WarehouseIncomeDto warehouseIncomeDto = WarehouseIncomeDto.create(warehouseIncome);
 
-
-        doNothing().when(requestValidationService).validateProductIncomeRequest(warehouseIncomeDto);
-        Mockito.when(warehouseIncomeService.addNewWarehouseIncome(warehouseIncomeDto)).thenReturn(warehouseIncome);
+        Mockito.when(warehouseIncomeService.addNewWarehouseIncome(Mockito.any(), Mockito.any())).thenReturn(warehouseIncome);
 
         ResponseEntity<ResponseDto<WarehouseIncomeDto>> response =
-                warehouseIncomeController.addNewWarehouseIncome(warehouseIncomeDto);
+                warehouseIncomeController.addNewWarehouseIncome(new WarehouseIncomeBuilderDto());
 
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -169,15 +162,14 @@ public class WarehouseIncomeControllerTest {
         warehouseIncome.setProducts(new ArrayList<>());
         WarehouseIncomeDto warehouseIncomeDto = WarehouseIncomeDto.create(warehouseIncome);
 
-        doNothing().when(requestValidationService).validateProductIncomeRequest(warehouseIncomeDto);
-        Mockito.when(warehouseIncomeService.addNewWarehouseIncome(warehouseIncomeDto))
+        Mockito.when(warehouseIncomeService.addNewWarehouseIncome(Mockito.any(), Mockito.any()))
                 .thenThrow(new WarehouseIncomeValidationException(
                         "Склада с именем "
                                 + warehouseIncomeDto.getWarehouseName()
                                 + " не существует!"));
 
         ResponseEntity<ResponseDto<WarehouseIncomeDto>> response =
-                warehouseIncomeController.addNewWarehouseIncome(warehouseIncomeDto);
+                warehouseIncomeController.addNewWarehouseIncome(new WarehouseIncomeBuilderDto());
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -190,17 +182,11 @@ public class WarehouseIncomeControllerTest {
 
     @Test
     public void addNewWarehouseIncomeTestFailInternalError() {
-        WarehouseIncome warehouseIncome = new WarehouseIncome();
-        warehouseIncome.setWarehouse(new Warehouse());
-        warehouseIncome.setProducts(new ArrayList<>());
-        WarehouseIncomeDto warehouseIncomeDto = WarehouseIncomeDto.create(warehouseIncome);
-
-        doNothing().when(requestValidationService).validateProductIncomeRequest(warehouseIncomeDto);
-        Mockito.when(warehouseIncomeService.addNewWarehouseIncome(warehouseIncomeDto))
+        Mockito.when(warehouseIncomeService.addNewWarehouseIncome(Mockito.any(), Mockito.any()))
                 .thenThrow(new RuntimeException("Внутренняя ошибка"));
 
         ResponseEntity<ResponseDto<WarehouseIncomeDto>> response =
-                warehouseIncomeController.addNewWarehouseIncome(warehouseIncomeDto);
+                warehouseIncomeController.addNewWarehouseIncome(new WarehouseIncomeBuilderDto());
 
         Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         Assert.assertNotNull(response.getBody());

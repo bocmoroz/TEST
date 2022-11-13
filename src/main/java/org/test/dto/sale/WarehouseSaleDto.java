@@ -1,4 +1,4 @@
-package org.test.dto;
+package org.test.dto.sale;
 
 import lombok.Data;
 import org.test.entity.WarehouseSale;
@@ -9,12 +9,14 @@ import java.util.stream.Collectors;
 @Data
 public class WarehouseSaleDto {
 
+    private Long id;
     private String warehouseName;
     private List<ProductSaleDto> products;
 
     public static WarehouseSaleDto create(WarehouseSale warehouseSale) {
         WarehouseSaleDto warehouseSaleDto = new WarehouseSaleDto();
 
+        warehouseSaleDto.setId(warehouseSale.getId());
         warehouseSaleDto.setWarehouseName(warehouseSale.getWarehouse().getName());
         warehouseSaleDto.setProducts(warehouseSale.getProducts().stream().map(
                 productCount -> {

@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.test.dto.ResponseDto;
-import org.test.dto.WarehouseTransportationDto;
+import org.test.dto.transportation.WarehouseTransportationBuilderDto;
+import org.test.dto.transportation.WarehouseTransportationDto;
 import org.test.entity.WarehouseTransportation;
 import org.test.exception.WarehouseTransportationValidationException;
 import org.test.helpers.DocumentRequestValidationService;
@@ -84,15 +85,18 @@ public class WarehouseTransportationController {
 
     @PostMapping(path = "/import")
     public ResponseEntity<ResponseDto<WarehouseTransportationDto>> addNewWarehouseTransportation(
-            @RequestBody WarehouseTransportationDto warehouseTransportationDto) {
+            @RequestBody WarehouseTransportationBuilderDto warehouseTransportationBuilderDto) {
 
         ResponseDto<WarehouseTransportationDto> responseDto;
 
         try {
-            log.info("warehouseTransportation {}", warehouseTransportationDto);
-            requestValidationService.validateProductTransportationRequest(warehouseTransportationDto);
-            WarehouseTransportation addedWarehouseTransportation =
-                    warehouseTransportationService.addNewWarehouseTransportation(warehouseTransportationDto);
+            log.info("warehouseTransportation {}", warehouseTransportationBuilderDto);
+            requestValidationService.validateProductTransportationRequest(warehouseTransportationBuilderDto);
+            WarehouseTransportation addedWarehouseTransportation = warehouseTransportationService
+                    .addNewWarehouseTransportation(
+                            warehouseTransportationBuilderDto.getWarehouseNameFrom(),
+                            warehouseTransportationBuilderDto.getWarehouseNameTo(),
+                            warehouseTransportationBuilderDto.getProducts());
             WarehouseTransportationDto addedWarehouseTransportationDto =
                     WarehouseTransportationDto.create(addedWarehouseTransportation);
             log.info("addedWarehouseTransportation {}", addedWarehouseTransportationDto);

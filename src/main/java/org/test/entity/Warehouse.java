@@ -36,4 +36,11 @@ public class Warehouse {
     })
     private List<ProductCount> products;
 
+    public Warehouse() {
+    }
+
+    public Warehouse(String name) {
+        this.name = name;
+    }
+
 }

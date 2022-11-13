@@ -6,12 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.test.dto.ResponseDto;
+import org.test.dto.product.ProductBuilderDto;
+import org.test.dto.product.ProductDto;
 import org.test.entity.Product;
 import org.test.exception.ProductValidationException;
 import org.test.helpers.EntityRequestValidationService;
 import org.test.service.ProductService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -28,14 +31,17 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<List<Product>>> getProducts() {
+    public ResponseEntity<ResponseDto<List<ProductDto>>> getProducts() {
 
-        ResponseDto<List<Product>> responseDto;
+        ResponseDto<List<ProductDto>> responseDto;
 
         try {
             List<Product> listProducts = productService.getProducts();
-            log.info("products {}", listProducts);
-            responseDto = new ResponseDto<>(0, "Продукты успешно получены!", listProducts);
+            List<ProductDto> listProductsDto = listProducts.stream()
+                    .map(ProductDto::create)
+                    .collect(Collectors.toList());
+            log.info("products {}", listProductsDto);
+            responseDto = new ResponseDto<>(0, "Продукты успешно получены!", listProductsDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (ProductValidationException e) {
             log.error("exception", e);
@@ -49,15 +55,16 @@ public class ProductController {
     }
 
     @GetMapping(path = "/product")
-    public ResponseEntity<ResponseDto<Product>> getProductByArticle(
+    public ResponseEntity<ResponseDto<ProductDto>> getProductByArticle(
             @RequestParam String articul) {
 
-        ResponseDto<Product> responseDto;
+        ResponseDto<ProductDto> responseDto;
 
         try {
             Product product = productService.getProductByArticle(articul);
-            log.info("product {}", product);
-            responseDto = new ResponseDto<>(0, "Продукт успешно получен!", product);
+            ProductDto productDto = ProductDto.create(product);
+            log.info("product {}", productDto);
+            responseDto = new ResponseDto<>(0, "Продукт успешно получен!", productDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (ProductValidationException e) {
             log.error("exception", e);
@@ -71,16 +78,18 @@ public class ProductController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<ResponseDto<Product>> addNewProduct(@RequestBody Product product) {
+    public ResponseEntity<ResponseDto<ProductBuilderDto>> addNewProduct(@RequestBody ProductBuilderDto productBuilderDto) {
 
-        ResponseDto<Product> responseDto;
+        ResponseDto<ProductBuilderDto> responseDto;
 
         try {
-            log.info("product {}", product);
-            requestValidationService.validateProductAddRequest(product.getArticul(), product.getName());
+            log.info("product {}", productBuilderDto);
+            requestValidationService.validateProductAddRequest(productBuilderDto.getArticul(), productBuilderDto.getName());
+            Product product = new Product(productBuilderDto.getArticul(), productBuilderDto.getName());
             Product addedProduct = productService.addNewProduct(product);
-            log.info("addedProduct {}", addedProduct);
-            responseDto = new ResponseDto<>(0, "Продукт успешно добавлен!", addedProduct);
+            ProductBuilderDto addedProductBuilderDto = ProductBuilderDto.create(addedProduct);
+            log.info("addedProduct {}", addedProductBuilderDto);
+            responseDto = new ResponseDto<>(0, "Продукт успешно добавлен!", addedProductBuilderDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (ProductValidationException e) {
             log.error("exception", e);
@@ -95,17 +104,18 @@ public class ProductController {
     }
 
     @PutMapping(path = "/update/{productArticul}")
-    public ResponseEntity<ResponseDto<Product>> updateProduct(
+    public ResponseEntity<ResponseDto<ProductDto>> updateProduct(
             @PathVariable("productArticul") String productArticul,
             @RequestParam(required = false) String newProductName) {
 
-        ResponseDto<Product> responseDto;
+        ResponseDto<ProductDto> responseDto;
 
         try {
             requestValidationService.validateProductUpdateRequest(productArticul, newProductName);
-            Product product = productService.updateProduct(productArticul, newProductName);
-            log.info("product {}", product);
-            responseDto = new ResponseDto<>(0, "Имя продукта успешно обновлено!", product);
+            Product updatedProduct = productService.updateProduct(productArticul, newProductName);
+            ProductDto updatedProductDto = ProductDto.create(updatedProduct);
+            log.info("product {}", updatedProductDto);
+            responseDto = new ResponseDto<>(0, "Имя продукта успешно обновлено!", updatedProductDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (ProductValidationException e) {
             log.error("exception", e);
@@ -119,15 +129,16 @@ public class ProductController {
     }
 
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDto<Product>> deleteProduct(
+    public ResponseEntity<ResponseDto<ProductDto>> deleteProduct(
             @RequestParam(name = "deleteProductArticul") String articul) {
 
-        ResponseDto<Product> responseDto;
+        ResponseDto<ProductDto> responseDto;
 
         try {
             Product deletedProduct = productService.deleteProduct(articul);
-            log.info("deletedProduct {}", deletedProduct);
-            responseDto = new ResponseDto<>(0, "Продукт успешно удалён!", deletedProduct);
+            ProductDto deletedProductDto = ProductDto.create(deletedProduct);
+            log.info("deletedProduct {}", deletedProductDto);
+            responseDto = new ResponseDto<>(0, "Продукт успешно удалён!", deletedProductDto);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (ProductValidationException e) {
             log.error("exception", e);

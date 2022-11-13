@@ -2,7 +2,7 @@ package org.test.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.test.dto.WarehouseIncomeDto;
+import org.test.dto.income.ProductIncomeDto;
 import org.test.entity.Product;
 import org.test.entity.ProductCount;
 import org.test.entity.Warehouse;
@@ -50,17 +50,17 @@ public class WarehouseIncomeService {
     }
 
     @Transactional
-    public WarehouseIncome addNewWarehouseIncome(WarehouseIncomeDto warehouseIncomeDto) {
+    public WarehouseIncome addNewWarehouseIncome(String warehouseName, List<ProductIncomeDto> products) {
 
-        Warehouse warehouse = warehouseService.getWarehouseByName(warehouseIncomeDto.getWarehouseName());
+        Warehouse warehouse = warehouseService.getWarehouseByName(warehouseName);
 
         if (warehouse == null) {
             throw new WarehouseIncomeValidationException("Склада с именем "
-                    + warehouseIncomeDto.getWarehouseName()
+                    + warehouseName
                     + " не существует!");
         }
 
-        warehouseIncomeDto.getProducts().forEach(productIncomeDto -> {
+        products.forEach(productIncomeDto -> {
             Product product;
             product = productService.getProductByArticle(productIncomeDto.getArticul());
             if (product != null) {
@@ -91,7 +91,7 @@ public class WarehouseIncomeService {
 
         WarehouseIncome warehouseIncome = new WarehouseIncome();
         warehouseIncome.setWarehouse(warehouse);
-        warehouseIncome.setProducts(warehouseIncomeDto.getProducts().stream()
+        warehouseIncome.setProducts(products.stream()
                 .map(productIncomeDto -> {
                     Product prod = productService.getProductByArticle(productIncomeDto.getArticul());
 

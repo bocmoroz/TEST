@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.test.dto.ResponseDto;
-import org.test.dto.WarehouseSaleDto;
+import org.test.dto.sale.WarehouseSaleBuilderDto;
+import org.test.dto.sale.WarehouseSaleDto;
 import org.test.entity.Warehouse;
 import org.test.entity.WarehouseSale;
 import org.test.exception.WarehouseSaleValidationException;
@@ -21,8 +22,6 @@ import org.test.service.WarehouseSaleService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest(classes = {WarehouseSaleController.class})
 @RunWith(SpringRunner.class)
@@ -124,15 +123,11 @@ public class WarehouseSaleControllerTest {
 
     @Test
     public void getWarehouseSaleByIdTestFailInternalError() {
-        WarehouseSale warehouseSale = new WarehouseSale();
-        warehouseSale.setWarehouse(new Warehouse());
-        warehouseSale.setProducts(new ArrayList<>());
-
-        Mockito.when(warehouseSaleService.getWarehouseSaleById(warehouseSale.getId()))
+        Mockito.when(warehouseSaleService.getWarehouseSaleById(Mockito.any()))
                 .thenThrow(new RuntimeException("Внутренняя ошибка"));
 
         ResponseEntity<ResponseDto<WarehouseSaleDto>> response =
-                warehouseSaleController.getWarehouseSaleById(warehouseSale.getId());
+                warehouseSaleController.getWarehouseSaleById(Mockito.any());
 
         Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -148,11 +143,10 @@ public class WarehouseSaleControllerTest {
         warehouseSale.setProducts(new ArrayList<>());
         WarehouseSaleDto warehouseSaleDto = WarehouseSaleDto.create(warehouseSale);
 
-        doNothing().when(requestValidationService).validateProductSaleRequest(warehouseSaleDto);
-        Mockito.when(warehouseSaleService.addNewWarehouseSale(warehouseSaleDto)).thenReturn(warehouseSale);
+        Mockito.when(warehouseSaleService.addNewWarehouseSale(Mockito.any(), Mockito.any())).thenReturn(warehouseSale);
 
         ResponseEntity<ResponseDto<WarehouseSaleDto>> response =
-                warehouseSaleController.addNewWarehouseSale(warehouseSaleDto);
+                warehouseSaleController.addNewWarehouseSale(new WarehouseSaleBuilderDto());
 
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -168,15 +162,14 @@ public class WarehouseSaleControllerTest {
         warehouseSale.setProducts(new ArrayList<>());
         WarehouseSaleDto warehouseSaleDto = WarehouseSaleDto.create(warehouseSale);
 
-        doNothing().when(requestValidationService).validateProductSaleRequest(warehouseSaleDto);
-        Mockito.when(warehouseSaleService.addNewWarehouseSale(warehouseSaleDto))
+        Mockito.when(warehouseSaleService.addNewWarehouseSale(Mockito.any(), Mockito.any()))
                 .thenThrow(new WarehouseSaleValidationException(
                         "Склада с именем "
                                 + warehouseSaleDto.getWarehouseName()
                                 + " не существует!"));
 
         ResponseEntity<ResponseDto<WarehouseSaleDto>> response =
-                warehouseSaleController.addNewWarehouseSale(warehouseSaleDto);
+                warehouseSaleController.addNewWarehouseSale(new WarehouseSaleBuilderDto());
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         Assert.assertNotNull(response.getBody());
@@ -189,17 +182,11 @@ public class WarehouseSaleControllerTest {
 
     @Test
     public void addNewWarehouseSaleTestFailInternalError() {
-        WarehouseSale warehouseSale = new WarehouseSale();
-        warehouseSale.setWarehouse(new Warehouse());
-        warehouseSale.setProducts(new ArrayList<>());
-        WarehouseSaleDto warehouseSaleDto = WarehouseSaleDto.create(warehouseSale);
-
-        doNothing().when(requestValidationService).validateProductSaleRequest(warehouseSaleDto);
-        Mockito.when(warehouseSaleService.addNewWarehouseSale(warehouseSaleDto))
+        Mockito.when(warehouseSaleService.addNewWarehouseSale(Mockito.any(), Mockito.any()))
                 .thenThrow(new RuntimeException("Внутренняя ошибка"));
 
         ResponseEntity<ResponseDto<WarehouseSaleDto>> response =
-                warehouseSaleController.addNewWarehouseSale(warehouseSaleDto);
+                warehouseSaleController.addNewWarehouseSale(new WarehouseSaleBuilderDto());
 
         Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         Assert.assertNotNull(response.getBody());

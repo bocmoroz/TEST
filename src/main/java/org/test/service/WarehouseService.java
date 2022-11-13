@@ -46,7 +46,7 @@ public class WarehouseService {
     public Warehouse addNewWarehouse(Warehouse warehouse) {
         List<Warehouse> warehouses = warehouseRepository.findWarehouseByName(warehouse.getName());
         if (!warehouses.isEmpty()) {
-            throw new WarehouseValidationException("Такой склад уже существует!");
+            throw new WarehouseValidationException("Склад с именем " + warehouse.getName() + " уже существует!");
         }
 
         warehouse.setDeleted(false);

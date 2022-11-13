@@ -1,12 +1,13 @@
-package org.test.dto;
+package org.test.dto.income;
 
 import lombok.Data;
 
 @Data
-public class LeftoverReportDto {
+public class ProductIncomeDto {
 
     private String articul;
     private String name;
+    private Long price;
     private Integer count;
 
 }
