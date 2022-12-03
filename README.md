@@ -1,26 +1,27 @@
 # warehouse-rest-app
-Тестовое задание 
+Simple CRUD REST API app for products and warehouses.
 
-## Установка
 
-Использовать [maven](https://maven.apache.org/download.cgi) для сборки проекта.<br/>
-Для этого в корневой папке проекта с pom.xml файлом выполнить:
+## Installation
+
+Use [maven](https://maven.apache.org/download.cgi) to build the project.<br/>
+Execute next command in the root folder of the project with the pom.xml file:
 
 ```
 mvn clean install
 ```
 
-## Использование
-Возможные способы использования:<br/>
-1. Запустить в IDE метод main() класса Application.
-2. В папке, содержащей .jar файл выполнить:
+## Using
+Possible ways of using:<br/>
+1. Run the main() method of the Application class in the IDE.
+2. Execute next command in the folder containing the .jar file :
 
 ```
 java -jar Warehouse_rest_app-1.0-SNAPSHOT.jar
 ```
 
-При запуске по умолчанию используется create-drop. Если такая конфигурация не подходит, то имеется файл [data.sql](src/main/resources/data.sql) для ининциализации.
+The default startup using create-drop for database. If this configuration is not suitable, then there is a file [data.sql](src/main/resources/data.sql) for initialization.
 
-Документация swagger доступна по URL: http://localhost:8080/swagger-ui.html.
+The Swagger documentation is available at the URL: http://localhost:8080/swagger-ui.html.
 
-UML диграмма связей в БД: [UML Diagram](src/main/resources/UML_Diagram.png)
+UML database link diagram: [UML Diagram](src/main/resources/UML_Diagram.png)
