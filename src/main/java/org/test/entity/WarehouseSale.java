@@ -23,8 +23,8 @@ public class WarehouseSale {
     private Warehouse warehouse;
 
     @ElementCollection
-    @CollectionTable(name = "Sale_products_count",
-            joinColumns = @JoinColumn(name = "WarehouseSale_id", nullable = false))
+    @CollectionTable(name = "sale_products_count",
+            joinColumns = @JoinColumn(name = "warehouseSale_id", nullable = false))
     @AttributeOverrides({
             @AttributeOverride(name = "product",
                     column = @Column(name = "product_id")),

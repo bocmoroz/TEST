@@ -15,7 +15,7 @@ public class Product {
     private Long id;
 
     @Column(unique = true)
-    private String articul;
+    private String article;
     private String name;
 
     private Long lastIncomePrice;
@@ -30,8 +30,8 @@ public class Product {
     public Product() {
     }
 
-    public Product(String articul, String name) {
-        this.articul = articul;
+    public Product(String article, String name) {
+        this.article = article;
         this.name = name;
     }
 

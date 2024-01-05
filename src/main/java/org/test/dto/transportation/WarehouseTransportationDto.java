@@ -25,7 +25,7 @@ public class WarehouseTransportationDto {
         warehouseTransportationDto.setProducts(warehouseTransportation.getProducts().stream().map(
                 productCount -> {
                     ProductTransportationDto productDto = new ProductTransportationDto();
-                    productDto.setArticul(productCount.getProduct().getArticul());
+                    productDto.setArticle(productCount.getProduct().getArticle());
                     productDto.setName(productCount.getProduct().getName());
                     productDto.setCount(productCount.getCount());
                     return productDto;

@@ -3,14 +3,18 @@ package org.test.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.test.dto.income.ProductIncomeDto;
+import org.test.dto.income.WarehouseIncomeDto;
 import org.test.entity.Product;
 import org.test.entity.ProductCount;
 import org.test.entity.Warehouse;
 import org.test.entity.WarehouseIncome;
 import org.test.exception.WarehouseIncomeValidationException;
+import org.test.repository.ProductRepository;
 import org.test.repository.WarehouseIncomeRepository;
+import org.test.repository.WarehouseRepository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,63 +23,60 @@ import java.util.stream.Collectors;
 public class WarehouseIncomeService {
 
     private final WarehouseIncomeRepository warehouseIncomeRepository;
-    private final ProductService productService;
-    private final WarehouseService warehouseService;
+    private final WarehouseRepository warehouseRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
     public WarehouseIncomeService(
             WarehouseIncomeRepository warehouseIncomeRepository,
-            ProductService productService,
-            WarehouseService warehouseService) {
+            WarehouseRepository warehouseRepository, ProductRepository productRepository) {
         this.warehouseIncomeRepository = warehouseIncomeRepository;
-        this.productService = productService;
-        this.warehouseService = warehouseService;
+        this.warehouseRepository = warehouseRepository;
+        this.productRepository = productRepository;
     }
 
-    public List<WarehouseIncome> getWarehouseIncomes() {
-        List<WarehouseIncome> list = warehouseIncomeRepository.findAll();
-        if (list.isEmpty()) {
-            throw new WarehouseIncomeValidationException("В БД нет поступлений продуктов!");
-        }
-        return list;
+    public List<WarehouseIncomeDto> getWarehouseIncomes() {
+        return warehouseIncomeRepository.findAll().stream()
+                .map(WarehouseIncomeDto::create)
+                .collect(Collectors.toList());
     }
 
-    public WarehouseIncome getWarehouseIncomeById(Long id) {
-        List<WarehouseIncome> warehouseIncomes = warehouseIncomeRepository.findWarehouseIncomeById(id);
-        if (warehouseIncomes.isEmpty()) {
-            throw new WarehouseIncomeValidationException("Поступления с номером " + id + " не существует!");
-        }
-
-        return warehouseIncomes.get(0);
+    public WarehouseIncomeDto getWarehouseIncomeById(Long id) {
+        WarehouseIncome warehouseIncome = warehouseIncomeRepository.findWarehouseIncomeById(id)
+                .orElseThrow(() -> new WarehouseIncomeValidationException("Поступления с номером " + id + " не существует!"));
+        return WarehouseIncomeDto.create(warehouseIncome);
     }
 
     @Transactional
-    public WarehouseIncome addNewWarehouseIncome(String warehouseName, List<ProductIncomeDto> products) {
+    public WarehouseIncomeDto addNewWarehouseIncome(String warehouseName, List<ProductIncomeDto> products) {
 
-        Warehouse warehouse = warehouseService.getWarehouseByName(warehouseName);
+        Warehouse warehouse = warehouseRepository.findWarehouseByName(warehouseName)
+                .orElseThrow(() -> new WarehouseIncomeValidationException("Склад с именем  " + warehouseName + " не существует!"));
 
-        if (warehouse == null) {
-            throw new WarehouseIncomeValidationException("Склада с именем "
-                    + warehouseName
-                    + " не существует!");
-        }
+        List<Product> existingProducts = productRepository.findAllByDeleted(false);
+
+        List<ProductCount> warehouseIncomeProducts = new ArrayList<>();
 
         products.forEach(productIncomeDto -> {
-            Product product;
-            product = productService.getProductByArticle(productIncomeDto.getArticul());
+            //check income product and add if needed
+            Product product = existingProducts.stream()
+                    .filter(existingProduct -> existingProduct.getArticle().equals(productIncomeDto.getArticle()))
+                    .findFirst().orElse(null);
+
             if (product != null) {
                 product.setLastIncomePrice(productIncomeDto.getPrice());
             } else {
-                product = new Product();
-                product.setArticul(productIncomeDto.getArticul());
-                product.setName(productIncomeDto.getName());
+                product = new Product(productIncomeDto.getArticle(), productIncomeDto.getName());
                 product.setLastIncomePrice(productIncomeDto.getPrice());
-                productService.addNewProduct(product);
+                productRepository.save(product);
             }
 
+            //add or update count of product for warehouse
             Product finalProduct = product;
-            Optional<ProductCount> optionalWarehouseProduct = warehouse.getProducts().stream()
-                    .filter(p -> p.getProduct().getArticul().equals(finalProduct.getArticul()))
+            List<ProductCount> warehouseProducts = warehouse.getProducts();
+
+            Optional<ProductCount> optionalWarehouseProduct = warehouseProducts.stream()
+                    .filter(p -> p.getProduct().getArticle().equals(finalProduct.getArticle()))
                     .findAny();
 
             if (optionalWarehouseProduct.isPresent()) {
@@ -85,25 +86,23 @@ public class WarehouseIncomeService {
                 ProductCount newProductCount = new ProductCount();
                 newProductCount.setProduct(product);
                 newProductCount.setCount(productIncomeDto.getCount());
-                warehouse.getProducts().add(newProductCount);
+                warehouseProducts.add(newProductCount);
             }
+
+            //add income of product
+            ProductCount incomeProductCount = new ProductCount();
+            incomeProductCount.setCount(productIncomeDto.getCount());
+            incomeProductCount.setProduct(product);
+            warehouseIncomeProducts.add(incomeProductCount);
         });
 
+        //save income
         WarehouseIncome warehouseIncome = new WarehouseIncome();
         warehouseIncome.setWarehouse(warehouse);
-        warehouseIncome.setProducts(products.stream()
-                .map(productIncomeDto -> {
-                    Product prod = productService.getProductByArticle(productIncomeDto.getArticul());
-
-                    ProductCount pc = new ProductCount();
-                    pc.setCount(productIncomeDto.getCount());
-                    pc.setProduct(prod);
-                    return pc;
-                }).collect(Collectors.toList()));
-
+        warehouseIncome.setProducts(warehouseIncomeProducts);
         warehouseIncomeRepository.save(warehouseIncome);
 
-        return warehouseIncome;
+        return WarehouseIncomeDto.create(warehouseIncome);
     }
 
 }

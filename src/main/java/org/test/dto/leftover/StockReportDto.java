@@ -3,10 +3,9 @@ package org.test.dto.leftover;
 import lombok.Data;
 
 @Data
-public class LeftoverReportDto {
+public class StockReportDto {
 
-    private String articul;
+    private String article;
     private String name;
     private Integer count;
-
 }

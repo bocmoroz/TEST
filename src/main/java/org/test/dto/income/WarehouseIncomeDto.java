@@ -21,7 +21,7 @@ public class WarehouseIncomeDto {
         warehouseIncomeDto.setProducts(warehouseIncome.getProducts().stream().map(
                 productCount -> {
                     ProductIncomeDto productDto = new ProductIncomeDto();
-                    productDto.setArticul(productCount.getProduct().getArticul());
+                    productDto.setArticle(productCount.getProduct().getArticle());
                     productDto.setName(productCount.getProduct().getName());
                     productDto.setPrice(productCount.getProduct().getLastIncomePrice());
                     productDto.setCount(productCount.getCount());

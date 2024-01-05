@@ -2,106 +2,78 @@ package org.test.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.test.dto.warehouse.WarehouseDto;
 import org.test.entity.Warehouse;
 import org.test.exception.WarehouseValidationException;
-import org.test.helpers.DeleteCountService;
+import org.test.helpers.DeletionCountService;
 import org.test.repository.WarehouseRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class WarehouseService {
 
     private final WarehouseRepository warehouseRepository;
-    private final DeleteCountService deleteCountService;
+    private final DeletionCountService deletionCountService;
 
     @Autowired
-    public WarehouseService(WarehouseRepository warehouseRepository, DeleteCountService deleteCountService) {
+    public WarehouseService(WarehouseRepository warehouseRepository, DeletionCountService deletionCountService) {
         this.warehouseRepository = warehouseRepository;
-        this.deleteCountService = deleteCountService;
+        this.deletionCountService = deletionCountService;
     }
 
-    public List<Warehouse> getWarehouses() {
-        List<Warehouse> list = warehouseRepository.findAllByDeleted(false);
-        if (list.isEmpty()) {
-            throw new WarehouseValidationException("В БД нет складов!");
-        }
-        return list;
+    public List<WarehouseDto> getWarehouses() {
+        return warehouseRepository.findAllByDeleted(false)
+                .stream()
+                .map(WarehouseDto::create)
+                .collect(Collectors.toList());
     }
 
-    public Warehouse getWarehouseByName(String name) {
-        List<Warehouse> warehouses = warehouseRepository.findWarehouseByName(name);
-        if (warehouses.isEmpty()) {
-            throw new WarehouseValidationException("Склад с именем  " + name + " не существует!");
-        }
-
-        if (warehouses.size() > 1) {
-            throw new WarehouseValidationException("БД содержит более одного склада с именем " + name + "!");
-        }
-
-        return warehouses.get(0);
+    public WarehouseDto getWarehouse(String name) {
+        Warehouse warehouse = getWarehouseByName(name);
+        return WarehouseDto.create(warehouse);
     }
 
-    public Warehouse addNewWarehouse(Warehouse warehouse) {
-        List<Warehouse> warehouses = warehouseRepository.findWarehouseByName(warehouse.getName());
-        if (!warehouses.isEmpty()) {
-            throw new WarehouseValidationException("Склад с именем " + warehouse.getName() + " уже существует!");
+    public WarehouseDto addNewWarehouse(String name) {
+        Optional<Warehouse> existingWarehouse = warehouseRepository.findWarehouseByName(name);
+        if (existingWarehouse.isPresent()) {
+            throw new WarehouseValidationException("Склад с именем " + name + " уже существует!");
         }
-
-        warehouse.setDeleted(false);
-
+        Warehouse warehouse = new Warehouse(name);
         warehouseRepository.save(warehouse);
 
-        return warehouse;
+        return WarehouseDto.create(warehouse);
     }
 
     @Transactional
-    public Warehouse updateWarehouse(String oldName, String newName) {
-        List<Warehouse> warehouses = warehouseRepository.findWarehouseByName(oldName);
-        if (warehouses.isEmpty()) {
-            throw new WarehouseValidationException("Склад с именем  " + oldName + " не существует!");
-        }
-
-        if (warehouses.size() > 1) {
-            throw new WarehouseValidationException("БД содержит более одного склада с имнем  " + oldName + "!");
-        }
-
-        Warehouse warehouse = warehouses.get(0);
-
-        if (warehouse.getName().equals(newName)) {
+    public WarehouseDto updateWarehouse(String oldName, String newName) {
+        Warehouse warehouseForUpdating = getWarehouseByName(oldName);
+        if (warehouseForUpdating.getName().equals(newName)) {
             throw new WarehouseValidationException("Необходимо ввести новое имя склада!");
         }
 
-        warehouse.setName(newName);
+        warehouseForUpdating.setName(newName);
+        warehouseRepository.save(warehouseForUpdating);
 
-        warehouseRepository.save(warehouse);
-
-        return warehouse;
-
+        return WarehouseDto.create(warehouseForUpdating);
     }
 
-    public Warehouse deleteWarehouse(String name) {
-        List<Warehouse> warehouses = warehouseRepository.findWarehouseByName(name);
-        if (warehouses.isEmpty()) {
-            throw new WarehouseValidationException("Склад с именем  " + name + " не существует!");
-        }
-
-        if (warehouses.size() > 1) {
-            throw new WarehouseValidationException("БД содержит более одного склада с именем  " + name + "!");
-        }
-
-        Warehouse warehouse = warehouses.get(0);
-
-        String deletedName = deleteCountService.defineDeletedWarehouseName(warehouse);
-
+    public WarehouseDto deleteWarehouse(String name) {
+        Warehouse warehouse = getWarehouseByName(name);
+        String deletedName = deletionCountService.defineDeletedWarehouseName(warehouse);
         warehouse.setName(deletedName);
-
         warehouse.setDeleted(true);
-
         warehouseRepository.save(warehouse);
 
-        return warehouse;
+        return WarehouseDto.create(warehouse);
+    }
+
+    private Warehouse getWarehouseByName(String name) {
+        return warehouseRepository.findWarehouseByName(name)
+                .orElseThrow(() -> new WarehouseValidationException("Склад с именем  " + name + " не существует!"));
     }
 
 }

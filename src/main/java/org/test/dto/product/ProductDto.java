@@ -6,7 +6,7 @@ import org.test.entity.Product;
 @Data
 public class ProductDto {
 
-    private String articul;
+    private String article;
     private String name;
     private Long lastIncomePrice;
     private Long lastSalePrice;
@@ -14,7 +14,7 @@ public class ProductDto {
     public static ProductDto create(Product product) {
         ProductDto productDto = new ProductDto();
 
-        productDto.setArticul(product.getArticul());
+        productDto.setArticle(product.getArticle());
         productDto.setName(product.getName());
         productDto.setLastIncomePrice(productDto.getLastIncomePrice());
         productDto.setLastSalePrice(productDto.getLastSalePrice());

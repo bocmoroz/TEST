@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class WarehouseProductDto {
 
-    private String articul;
+    private String article;
     private String name;
     private Integer count;
 

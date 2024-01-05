@@ -25,8 +25,8 @@ public class WarehouseTransportation {
     private Warehouse warehouseTo;
 
     @ElementCollection
-    @CollectionTable(name = "Transportation_products_count",
-            joinColumns = @JoinColumn(name = "WarehouseTransportation_id", nullable = false))
+    @CollectionTable(name = "transportation_products_count",
+            joinColumns = @JoinColumn(name = "warehouseTransportation_id", nullable = false))
     @AttributeOverrides({
             @AttributeOverride(name = "product",
                     column = @Column(name = "product_id")),

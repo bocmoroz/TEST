@@ -5,12 +5,15 @@ import org.springframework.stereotype.Repository;
 import org.test.entity.Warehouse;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
 public interface WarehouseRepository extends JpaRepository<Warehouse, Long> {
 
-    List<Warehouse> findWarehouseByName(String name);
+    Optional<Warehouse> findWarehouseByName(String name);
+
+    List<Warehouse> findByNameContainingAndDeleted(String name);
 
     List<Warehouse> findAllByDeleted(Boolean isDeleted);
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ProductIncomeDto {
 
-    private String articul;
+    private String article;
     private String name;
     private Long price;
     private Integer count;
