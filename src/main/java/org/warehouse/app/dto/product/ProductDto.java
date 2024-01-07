@@ -16,8 +16,8 @@ public class ProductDto {
 
         productDto.setArticle(product.getArticle());
         productDto.setName(product.getName());
-        productDto.setLastIncomePrice(productDto.getLastIncomePrice());
-        productDto.setLastSalePrice(productDto.getLastSalePrice());
+        productDto.setLastIncomePrice(product.getLastIncomePrice());
+        productDto.setLastSalePrice(product.getLastSalePrice());
 
         return productDto;
     }
