@@ -29,12 +29,6 @@ public class WarehouseTransportation {
     @ElementCollection
     @CollectionTable(name = "transportation_products_count",
             joinColumns = @JoinColumn(name = "warehouse_transportation_id", nullable = false))
-    @AttributeOverrides({
-            @AttributeOverride(name = "product",
-                    column = @Column(name = "product_id")),
-            @AttributeOverride(name = "count",
-                    column = @Column(name = "count"))
-    })
     private List<ProductCount> products;
 
 }

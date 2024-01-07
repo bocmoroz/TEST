@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -18,8 +19,8 @@ public class Product {
     private String article;
     private String name;
 
-    private Long lastIncomePrice;
-    private Long lastSalePrice;
+    private BigDecimal lastIncomePrice;
+    private BigDecimal lastSalePrice;
 
     @UpdateTimestamp
     private Date lastChangeDate;

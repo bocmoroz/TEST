@@ -23,7 +23,7 @@ public class WarehouseIncomeDto {
                     ProductIncomeDto productDto = new ProductIncomeDto();
                     productDto.setArticle(productCount.getProduct().getArticle());
                     productDto.setName(productCount.getProduct().getName());
-                    productDto.setPrice(productCount.getProduct().getLastIncomePrice());
+                    productDto.setPrice(productCount.getPrice());
                     productDto.setCount(productCount.getCount());
                     return productDto;
                 }).collect(Collectors.toList()));

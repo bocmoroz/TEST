@@ -104,6 +104,7 @@ public class WarehouseSaleService {
             ProductCount saleProductCount = new ProductCount();
             saleProductCount.setCount(productSaleDto.getCount());
             saleProductCount.setProduct(product);
+            saleProductCount.setPrice(productSaleDto.getPrice());
             warehouseSaleProducts.add(saleProductCount);
         });
 

@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import java.math.BigDecimal;
 
 @Data
 @Embeddable
@@ -15,4 +16,6 @@ public class ProductCount {
     private Product product;
 
     private Integer count;
+
+    private BigDecimal price;
 }

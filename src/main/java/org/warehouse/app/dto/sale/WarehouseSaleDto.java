@@ -23,7 +23,7 @@ public class WarehouseSaleDto {
                     ProductSaleDto productDto = new ProductSaleDto();
                     productDto.setArticle(productCount.getProduct().getArticle());
                     productDto.setName(productCount.getProduct().getName());
-                    productDto.setPrice(productCount.getProduct().getLastSalePrice());
+                    productDto.setPrice(productCount.getPrice());
                     productDto.setCount(productCount.getCount());
                     return productDto;
                 }).collect(Collectors.toList()));

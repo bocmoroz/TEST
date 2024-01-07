@@ -100,6 +100,7 @@ public class WarehouseIncomeService {
             ProductCount incomeProductCount = new ProductCount();
             incomeProductCount.setCount(productIncomeDto.getCount());
             incomeProductCount.setProduct(product);
+            incomeProductCount.setPrice(productIncomeDto.getPrice());
             warehouseIncomeProducts.add(incomeProductCount);
         });
 

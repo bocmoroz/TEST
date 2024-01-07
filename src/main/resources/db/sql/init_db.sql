@@ -32,15 +32,16 @@ CREATE SEQUENCE IF NOT EXISTS warehouse_transportation_id_seq
     MINVALUE 1
     MAXVALUE 9223372036854775807
     CACHE 1;
+
 CREATE TABLE IF NOT EXISTS product
 (
     id bigint NOT NULL DEFAULT nextval('product_id_seq'::regclass),
     articul character varying(255) COLLATE pg_catalog."default",
+    name character varying(255) COLLATE pg_catalog."default",
     deleted boolean NOT NULL,
     last_change_date timestamp without time zone,
-    last_income_price bigint,
-    last_sale_price bigint,
-    name character varying(255) COLLATE pg_catalog."default",
+    last_income_price numeric(12, 2),
+    last_sale_price numeric(12, 2),
     CONSTRAINT product_id_pkey PRIMARY KEY (id),
     CONSTRAINT product_articul_key UNIQUE (articul)
 );
@@ -48,9 +49,9 @@ CREATE TABLE IF NOT EXISTS product
 CREATE TABLE IF NOT EXISTS warehouse
 (
     id bigint NOT NULL DEFAULT nextval('warehouse_id_seq'::regclass),
+    name character varying(255) COLLATE pg_catalog."default",
     deleted boolean NOT NULL,
     last_change_date timestamp without time zone,
-    name character varying(255) COLLATE pg_catalog."default",
     CONSTRAINT warehouse_id_pkey PRIMARY KEY (id),
     CONSTRAINT warehouse_name_key UNIQUE (name)
 );
@@ -58,8 +59,9 @@ CREATE TABLE IF NOT EXISTS warehouse
 CREATE TABLE IF NOT EXISTS warehouse_products_count
 (
     warehouse_id bigint NOT NULL,
-    count integer,
     product_id bigint NOT NULL,
+    count integer,
+    price numeric(12, 2),
     CONSTRAINT warehouseProductsCount_warehouseId_fkey FOREIGN KEY (warehouse_id)
         REFERENCES warehouse (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -85,8 +87,9 @@ CREATE TABLE IF NOT EXISTS warehouse_income
 CREATE TABLE IF NOT EXISTS income_products_count
 (
     warehouse_income_id bigint NOT NULL,
-    count integer,
     product_id bigint NOT NULL,
+    count integer,
+    price numeric(12, 2),
     CONSTRAINT incomeProductsCount_productId_fkey FOREIGN KEY (product_id)
         REFERENCES product (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -112,8 +115,9 @@ CREATE TABLE IF NOT EXISTS warehouse_sale
 CREATE TABLE IF NOT EXISTS sale_products_count
 (
     warehouse_sale_id bigint NOT NULL,
-    count integer,
     product_id bigint NOT NULL,
+    count integer,
+    price numeric(12, 2),
     CONSTRAINT saleProductsCount_productSaleId_fkey FOREIGN KEY (warehouse_sale_id)
         REFERENCES warehouse_sale (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -144,8 +148,9 @@ CREATE TABLE IF NOT EXISTS warehouse_transportation
 CREATE TABLE IF NOT EXISTS transportation_products_count
 (
     warehouse_transportation_id bigint NOT NULL,
-    count integer,
     product_id bigint NOT NULL,
+    count integer,
+    price numeric(12, 2),
     CONSTRAINT transportationProductsCount_productTransportationId_fkey FOREIGN KEY (warehouse_transportation_id)
         REFERENCES warehouse_transportation (id) MATCH SIMPLE
         ON UPDATE NO ACTION
