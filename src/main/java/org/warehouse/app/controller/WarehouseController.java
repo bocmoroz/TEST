@@ -9,7 +9,7 @@ import org.warehouse.app.dto.ResponseDto;
 import org.warehouse.app.dto.warehouse.WarehouseBuilderDto;
 import org.warehouse.app.dto.warehouse.WarehouseDto;
 import org.warehouse.app.exception.WarehouseValidationException;
-import org.warehouse.app.helpers.EntityRequestValidationService;
+import org.warehouse.app.util.EntityRequestValidationService;
 import org.warehouse.app.service.WarehouseService;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class WarehouseController {
 
     @PostMapping
     @ApiOperation("Adding new warehouse")
-    public ResponseDto<WarehouseDto> addNewWarehouse(@RequestBody WarehouseBuilderDto warehouseBuilderDto) {
+    public ResponseDto<WarehouseDto> addWarehouse(@RequestBody WarehouseBuilderDto warehouseBuilderDto) {
         String name = warehouseBuilderDto.getName();
         requestValidationService.validateWarehouseAddRequest(name);
         WarehouseDto addedWarehouse = warehouseService.addNewWarehouse(name);

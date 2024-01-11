@@ -5,13 +5,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.warehouse.app.dto.warehouse.WarehouseDto;
-import org.warehouse.app.entity.Warehouse;
+import org.warehouse.app.model.WarehouseEntity;
 import org.warehouse.app.exception.WarehouseValidationException;
-import org.warehouse.app.helpers.DeletionCountService;
-import org.warehouse.app.repository.WarehouseRepository;
+import org.warehouse.app.util.DeletionCountService;
+import org.warehouse.app.dao.WarehouseRepository;
 
 import javax.transaction.Transactional;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,25 +39,25 @@ public class WarehouseService {
     }
 
     public WarehouseDto getWarehouse(String name) {
-        Warehouse warehouse = getWarehouseByName(name);
-        return WarehouseDto.create(warehouse);
+        WarehouseEntity warehouseEntity = getWarehouseByName(name);
+        return WarehouseDto.create(warehouseEntity);
     }
 
     public WarehouseDto addNewWarehouse(String name) {
-        Optional<Warehouse> existingWarehouse = warehouseRepository.findWarehouseByName(name);
+        Optional<WarehouseEntity> existingWarehouse = warehouseRepository.findWarehouseByName(name);
         if (existingWarehouse.isPresent()) {
             throw new WarehouseValidationException(messageSource.getMessage("warehouse.service.already.exists",
                     new Object[]{name}, LocaleContextHolder.getLocale()));
         }
-        Warehouse warehouse = new Warehouse(name);
-        warehouseRepository.save(warehouse);
+        WarehouseEntity warehouseEntity = new WarehouseEntity(name);
+        warehouseRepository.save(warehouseEntity);
 
-        return WarehouseDto.create(warehouse);
+        return WarehouseDto.create(warehouseEntity);
     }
 
     @Transactional
     public WarehouseDto updateWarehouse(String oldName, String newName) {
-        Warehouse warehouseForUpdating = getWarehouseByName(oldName);
+        WarehouseEntity warehouseForUpdating = getWarehouseByName(oldName);
         if (warehouseForUpdating.getName().equals(newName)) {
             throw new WarehouseValidationException(messageSource.getMessage("warehouse.service.invalid.new.name",
                     null, LocaleContextHolder.getLocale()));
@@ -71,16 +70,16 @@ public class WarehouseService {
     }
 
     public WarehouseDto deleteWarehouse(String name) {
-        Warehouse warehouse = getWarehouseByName(name);
-        String deletedName = deletionCountService.defineDeletedWarehouseName(warehouse);
-        warehouse.setName(deletedName);
-        warehouse.setDeleted(true);
-        warehouseRepository.save(warehouse);
+        WarehouseEntity warehouseEntity = getWarehouseByName(name);
+        String deletedName = deletionCountService.defineDeletedWarehouseName(warehouseEntity);
+        warehouseEntity.setName(deletedName);
+        warehouseEntity.setDeleted(true);
+        warehouseRepository.save(warehouseEntity);
 
-        return WarehouseDto.create(warehouse);
+        return WarehouseDto.create(warehouseEntity);
     }
 
-    private Warehouse getWarehouseByName(String name) {
+    private WarehouseEntity getWarehouseByName(String name) {
         return warehouseRepository.findWarehouseByName(name)
                 .orElseThrow(() -> new WarehouseValidationException(messageSource.getMessage("warehouse.service.not.exists",
                         new Object[]{name}, LocaleContextHolder.getLocale())));

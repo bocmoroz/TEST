@@ -9,7 +9,7 @@ import org.warehouse.app.dto.ResponseDto;
 import org.warehouse.app.dto.product.ProductBuilderDto;
 import org.warehouse.app.dto.product.ProductDto;
 import org.warehouse.app.exception.ProductValidationException;
-import org.warehouse.app.helpers.EntityRequestValidationService;
+import org.warehouse.app.util.EntityRequestValidationService;
 import org.warehouse.app.service.ProductService;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class ProductController {
 
     @PostMapping
     @ApiOperation("Adding new product")
-    public ResponseDto<ProductDto> addNewProduct(@RequestBody ProductBuilderDto productBuilderDto) {
+    public ResponseDto<ProductDto> addProduct(@RequestBody ProductBuilderDto productBuilderDto) {
         String article = productBuilderDto.getArticle();
         String name = productBuilderDto.getName();
         requestValidationService.validateProductAddRequest(article, name);

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.warehouse.app.dto.ResponseDto;
-import org.warehouse.app.dto.leftover.StockReportDto;
+import org.warehouse.app.dto.stock.StockReportDto;
 import org.warehouse.app.dto.warehouse.WarehouseDto;
 import org.warehouse.app.service.WarehouseService;
 

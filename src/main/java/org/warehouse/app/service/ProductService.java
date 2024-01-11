@@ -5,10 +5,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.warehouse.app.dto.product.ProductDto;
-import org.warehouse.app.entity.Product;
+import org.warehouse.app.model.ProductEntity;
 import org.warehouse.app.exception.ProductValidationException;
-import org.warehouse.app.helpers.DeletionCountService;
-import org.warehouse.app.repository.ProductRepository;
+import org.warehouse.app.util.DeletionCountService;
+import org.warehouse.app.dao.ProductRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -39,25 +39,25 @@ public class ProductService {
     }
 
     public ProductDto getProduct(String article) {
-        Product product = getProductByArticle(article);
-        return ProductDto.create(product);
+        ProductEntity productEntity = getProductByArticle(article);
+        return ProductDto.create(productEntity);
     }
 
     public ProductDto addNewProduct(String article, String name) {
-        Optional<Product> existingProduct = productRepository.findProductByArticle(article);
+        Optional<ProductEntity> existingProduct = productRepository.findProductByArticle(article);
         if (existingProduct.isPresent()) {
             throw new ProductValidationException(messageSource.getMessage("product.service.already.exists",
                     new Object[]{article}, LocaleContextHolder.getLocale()));
         }
-        Product product = new Product(article, name);
-        productRepository.save(product);
+        ProductEntity productEntity = new ProductEntity(article, name);
+        productRepository.save(productEntity);
 
-        return ProductDto.create(product);
+        return ProductDto.create(productEntity);
     }
 
     @Transactional
     public ProductDto updateProduct(String article, String name) {
-        Product productForUpdating = getProductByArticle(article);
+        ProductEntity productForUpdating = getProductByArticle(article);
         if (productForUpdating.getName().equals(name)) {
             throw new ProductValidationException(messageSource.getMessage("product.service.invalid.new.name",
                     null, LocaleContextHolder.getLocale()));
@@ -70,7 +70,7 @@ public class ProductService {
     }
 
     public ProductDto deleteProduct(String article) {
-        Product productForDeleting = getProductByArticle(article);
+        ProductEntity productForDeleting = getProductByArticle(article);
         String deletedArticle = deletionCountService.defineDeletedProductArticle(productForDeleting);
         productForDeleting.setArticle(deletedArticle);
         productForDeleting.setDeleted(true);
@@ -79,7 +79,7 @@ public class ProductService {
         return ProductDto.create(productForDeleting);
     }
 
-    private Product getProductByArticle(String article) {
+    private ProductEntity getProductByArticle(String article) {
         return productRepository.findProductByArticle(article)
                 .orElseThrow(() -> new ProductValidationException(messageSource.getMessage("product.service.not.exists",
                         new Object[]{article}, LocaleContextHolder.getLocale())));

@@ -24,4 +24,4 @@ The default startup using create-drop for database. If this configuration is not
 
 The Swagger documentation is available at the URL: http://localhost:8080/swagger-ui.html.
 
-UML database link diagram: [UML Diagram](src/main/resources/UML_Diagram.png)
+UML database link diagram: [UML Diagram](src/main/resources/db/UML_Diagram.png)

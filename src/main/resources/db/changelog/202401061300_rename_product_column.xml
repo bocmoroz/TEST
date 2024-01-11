@@ -6,7 +6,7 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="rename_product_column" author="mokeev_andrey">
-        <renameColumn tableName="product" oldColumnName="articul" newColumnName="article"/>
+        <renameColumn tableName="products" oldColumnName="articul" newColumnName="article"/>
     </changeSet>
 
 </databaseChangeLog>

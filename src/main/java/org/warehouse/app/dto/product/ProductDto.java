@@ -1,7 +1,7 @@
 package org.warehouse.app.dto.product;
 
 import lombok.Data;
-import org.warehouse.app.entity.Product;
+import org.warehouse.app.model.ProductEntity;
 
 import java.math.BigDecimal;
 
@@ -13,14 +13,12 @@ public class ProductDto {
     private BigDecimal lastIncomePrice;
     private BigDecimal lastSalePrice;
 
-    public static ProductDto create(Product product) {
+    public static ProductDto create(ProductEntity productEntity) {
         ProductDto productDto = new ProductDto();
-
-        productDto.setArticle(product.getArticle());
-        productDto.setName(product.getName());
-        productDto.setLastIncomePrice(product.getLastIncomePrice());
-        productDto.setLastSalePrice(product.getLastSalePrice());
-
+        productDto.setArticle(productEntity.getArticle());
+        productDto.setName(productEntity.getName());
+        productDto.setLastIncomePrice(productEntity.getLastIncomePrice());
+        productDto.setLastSalePrice(productEntity.getLastSalePrice());
         return productDto;
     }
 
