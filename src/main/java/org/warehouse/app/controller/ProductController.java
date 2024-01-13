@@ -9,8 +9,8 @@ import org.warehouse.app.dto.ResponseDto;
 import org.warehouse.app.dto.product.ProductBuilderDto;
 import org.warehouse.app.dto.product.ProductDto;
 import org.warehouse.app.exception.ProductValidationException;
-import org.warehouse.app.util.EntityRequestValidationService;
 import org.warehouse.app.service.ProductService;
+import org.warehouse.app.util.EntityRequestValidationService;
 
 import java.util.List;
 

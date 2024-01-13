@@ -3,12 +3,11 @@ package org.warehouse.app.model;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.warehouse.app.enums.TransportationDocumentTypeEnum;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import org.warehouse.app.enums.TransportationDocumentTypeEnum;
 
 @Entity
 @Table(name = "transportation_documents")

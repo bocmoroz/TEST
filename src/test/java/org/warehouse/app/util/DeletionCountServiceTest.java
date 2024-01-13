@@ -12,7 +12,6 @@ import org.warehouse.app.dao.ProductRepository;
 import org.warehouse.app.dao.WarehouseRepository;
 import org.warehouse.app.model.ProductEntity;
 import org.warehouse.app.model.WarehouseEntity;
-import org.warehouse.app.util.DeletionCountService;
 
 import java.util.Collections;
 

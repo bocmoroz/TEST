@@ -9,8 +9,8 @@ import org.warehouse.app.dto.ResponseDto;
 import org.warehouse.app.dto.warehouse.WarehouseBuilderDto;
 import org.warehouse.app.dto.warehouse.WarehouseDto;
 import org.warehouse.app.exception.WarehouseValidationException;
-import org.warehouse.app.util.EntityRequestValidationService;
 import org.warehouse.app.service.WarehouseService;
+import org.warehouse.app.util.EntityRequestValidationService;
 
 import java.util.List;
 

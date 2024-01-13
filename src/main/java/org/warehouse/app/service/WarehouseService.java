@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-import org.warehouse.app.dto.warehouse.WarehouseDto;
-import org.warehouse.app.model.WarehouseEntity;
-import org.warehouse.app.exception.WarehouseValidationException;
-import org.warehouse.app.util.DeletionCountService;
 import org.warehouse.app.dao.WarehouseRepository;
+import org.warehouse.app.dto.warehouse.WarehouseDto;
+import org.warehouse.app.exception.WarehouseValidationException;
+import org.warehouse.app.model.WarehouseEntity;
+import org.warehouse.app.util.DeletionCountService;
 
 import javax.transaction.Transactional;
 import java.util.List;

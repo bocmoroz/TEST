@@ -4,9 +4,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.math.BigDecimal;
 
-import static org.warehouse.app.enums.TransportationDocumentTypeEnum.INCOME;
-import static org.warehouse.app.enums.TransportationDocumentTypeEnum.SALE;
-
 public class TransportationDocumentBuilderProductDto {
 
     private String article;
