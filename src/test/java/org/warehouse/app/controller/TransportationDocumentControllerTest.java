@@ -2,6 +2,7 @@ package org.warehouse.app.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.warehouse.app.config.LoggingTestWatcher;
 import org.warehouse.app.dto.DocumentDto;
 import org.warehouse.app.dto.ResponseDto;
 import org.warehouse.app.dto.transportation.TransportationDocumentBuilderDto;
@@ -40,6 +42,9 @@ public class TransportationDocumentControllerTest {
     private static final Long DEFAULT_ID = 999L;
     private static final String DEFAULT_NAME = "Name12345";
     private static final TransportationDocumentTypeEnum DEFAULT_TYPE = INCOME;
+
+    @Rule
+    public LoggingTestWatcher loggingTestWatcher = new LoggingTestWatcher();
 
     @Autowired
     private TransportationDocumentController transportationDocumentController;

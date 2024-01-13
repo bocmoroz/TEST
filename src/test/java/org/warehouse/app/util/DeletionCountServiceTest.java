@@ -1,6 +1,7 @@
 package org.warehouse.app.util;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.warehouse.app.config.LoggingTestWatcher;
 import org.warehouse.app.dao.ProductRepository;
 import org.warehouse.app.dao.WarehouseRepository;
 import org.warehouse.app.model.ProductEntity;
@@ -20,6 +22,9 @@ import java.util.Collections;
 public class DeletionCountServiceTest {
 
     private static final String DEFAULT_NAME = "Name12345";
+
+    @Rule
+    public LoggingTestWatcher loggingTestWatcher = new LoggingTestWatcher();
 
     @Autowired
     private DeletionCountService deletionCountService;

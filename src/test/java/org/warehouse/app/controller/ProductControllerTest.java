@@ -2,17 +2,18 @@ package org.warehouse.app.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.warehouse.app.config.LoggingTestWatcher;
 import org.warehouse.app.dto.ResponseDto;
 import org.warehouse.app.dto.product.ProductBuilderDto;
 import org.warehouse.app.dto.product.ProductDto;
@@ -32,11 +33,13 @@ import static org.warehouse.app.dto.ResponseDto.StatusEnum.*;
 
 @SpringBootTest(classes = {ProductController.class})
 @RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
 public class ProductControllerTest {
 
     private static final String DEFAULT_ARTICLE = "Article12345";
     private static final String DEFAULT_NAME = "Name12345";
+
+    @Rule
+    public LoggingTestWatcher loggingTestWatcher = new LoggingTestWatcher();
 
     @Autowired
     private ProductController productController;
