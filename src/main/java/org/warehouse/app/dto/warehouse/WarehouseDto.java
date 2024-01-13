@@ -1,20 +1,18 @@
 package org.warehouse.app.dto.warehouse;
 
-import lombok.Data;
 import org.warehouse.app.model.WarehouseEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
 public class WarehouseDto {
 
-    private String warehouseName;
+    private String name;
     private List<WarehouseProductDto> products;
 
     public static WarehouseDto create(WarehouseEntity warehouseEntity) {
         WarehouseDto warehouseDto = new WarehouseDto();
-        warehouseDto.setWarehouseName(warehouseEntity.getName());
+        warehouseDto.setName(warehouseEntity.getName());
         warehouseDto.setProducts(warehouseEntity.getProducts().stream().map(
                 productCount -> {
                     WarehouseProductDto warehouseProductDto = new WarehouseProductDto();
@@ -27,4 +25,19 @@ public class WarehouseDto {
         return warehouseDto;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<WarehouseProductDto> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<WarehouseProductDto> products) {
+        this.products = products;
+    }
 }

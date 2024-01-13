@@ -40,5 +40,4 @@ public class TransportationDocumentEntity {
     @CollectionTable(name = "transportation_document_products",
             joinColumns = @JoinColumn(name = "transportation_document_id", nullable = false))
     private List<TransportationDocumentProduct> products;
-
 }

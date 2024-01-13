@@ -38,7 +38,7 @@ public class WarehouseController {
 
     @GetMapping(path = "/{name}")
     @ApiOperation("Getting warehouse by article")
-    public ResponseDto<WarehouseDto> getWarehouseByName(@PathVariable String name) {
+    public ResponseDto<WarehouseDto> getWarehouse(@PathVariable String name) {
         WarehouseDto warehouse = warehouseService.getWarehouse(name);
         return ResponseDto.success(warehouse);
     }

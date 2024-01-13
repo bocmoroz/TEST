@@ -1,9 +1,7 @@
 package org.warehouse.app.dto.warehouse;
 
-import lombok.Data;
 import org.warehouse.app.model.WarehouseEntity;
 
-@Data
 public class WarehouseBuilderDto {
 
     private String name;
@@ -13,5 +11,13 @@ public class WarehouseBuilderDto {
         warehouseBuilderDto.setName(warehouseEntity.getName());
 
         return warehouseBuilderDto;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

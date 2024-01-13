@@ -39,5 +39,4 @@ public class WarehouseEntity {
         this.name = name;
         this.deleted = false;
     }
-
 }

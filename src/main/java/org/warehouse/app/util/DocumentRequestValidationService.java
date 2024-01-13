@@ -5,13 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-import org.warehouse.app.dto.moving.MovingDocumentBuilderProductDto;
-import org.warehouse.app.dto.income.IncomeDocumentBuilderProductDto;
-import org.warehouse.app.dto.sale.SaleDocumentBuilderProductDto;
-import org.warehouse.app.exception.IncomeDocumentValidationException;
-import org.warehouse.app.exception.SaleDocumentValidationException;
-import org.warehouse.app.exception.MovingDocumentValidationException;
+import org.warehouse.app.dto.transportation.TransportationDocumentBuilderDto;
+import org.warehouse.app.dto.transportation.TransportationDocumentBuilderProductDto;
+import org.warehouse.app.enums.TransportationDocumentTypeEnum;
+import org.warehouse.app.exception.TransportationDocumentValidationException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,112 +24,83 @@ public class DocumentRequestValidationService {
         this.messageSource = messageSource;
     }
 
-    public void validateIncomeDocumentRequest(String documentName, String warehouseName, List<IncomeDocumentBuilderProductDto> products) {
+    public void validateTransportationDocumentRequest(TransportationDocumentBuilderDto dto) {
+        validateDocumentName(dto.getDocumentName());
+        validateDocumentType(dto.getType());
+        validateDocumentProducts(dto.getProducts(), dto.getType());
+        validateWarehouseNames(dto.getWarehouseNameFrom(), dto.getWarehouseNameTo(), dto.getType());
+    }
 
+    private void validateDocumentName(String documentName) {
         if (StringUtils.isEmpty(documentName)) {
-            throw new IncomeDocumentValidationException(messageSource.getMessage(
-                    "validation.add.income.document.invalid.document.name",
+            throw new TransportationDocumentValidationException(messageSource.getMessage(
+                    "validation.add.transportation.document.invalid.document.name",
                     null, LocaleContextHolder.getLocale()));
-        }
-
-        if (StringUtils.isEmpty(warehouseName)) {
-            throw new IncomeDocumentValidationException(messageSource.getMessage(
-                    "validation.add.income.document.invalid.warehouse.name",
-                    null, LocaleContextHolder.getLocale()));
-        }
-
-        if (products == null || products.isEmpty()) {
-            throw new IncomeDocumentValidationException(messageSource.getMessage(
-                    "validation.add.income.document.invalid.products",
-                    null, LocaleContextHolder.getLocale()));
-        }
-
-        List<IncomeDocumentBuilderProductDto> invalidDtoList = products.stream()
-                .filter(IncomeDocumentBuilderProductDto::checkFieldsForUploading)
-                .collect(Collectors.toList());
-
-        if (!invalidDtoList.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            invalidDtoList.forEach(productIncomeDto -> sb.append(productIncomeDto.toString()).append("\n"));
-            throw new IncomeDocumentValidationException(messageSource.getMessage(
-                    "validation.add.income.document.invalid.products.fields",
-                    new Object[]{sb.toString()}, LocaleContextHolder.getLocale()));
         }
     }
 
-    public void validateSaleDocumentRequest(String documentName, String warehouseName,
-                                            List<SaleDocumentBuilderProductDto> products) {
-
-        if (StringUtils.isEmpty(documentName)) {
-            throw new SaleDocumentValidationException(messageSource.getMessage(
-                    "validation.add.sale.document.invalid.document.name",
+    private void validateDocumentType(TransportationDocumentTypeEnum type) {
+        if (type == null || !Arrays.asList(TransportationDocumentTypeEnum.values()).contains(type)) {
+            throw new TransportationDocumentValidationException(messageSource.getMessage(
+                    "validation.add.transportation.document.invalid.document.type",
                     null, LocaleContextHolder.getLocale()));
         }
-
-        if (StringUtils.isEmpty(warehouseName)) {
-            throw new SaleDocumentValidationException(messageSource.getMessage(
-                    "validation.add.sale.document.invalid.warehouse.name",
-                    null, LocaleContextHolder.getLocale()));
-        }
-
-        if (products == null || products.isEmpty()) {
-            throw new SaleDocumentValidationException(messageSource.getMessage(
-                    "validation.add.sale.document.invalid.products",
-                    null, LocaleContextHolder.getLocale()));
-        }
-
-        List<SaleDocumentBuilderProductDto> invalidDtoList = products.stream()
-                .filter(SaleDocumentBuilderProductDto::checkFieldsForUploading)
-                .collect(Collectors.toList());
-
-        if (!invalidDtoList.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            invalidDtoList.forEach(productSaleDto -> sb.append(productSaleDto.toString()).append("\n"));
-            throw new SaleDocumentValidationException(messageSource.getMessage(
-                    "validation.add.sale.document.invalid.products.fields",
-                    new Object[]{sb.toString()}, LocaleContextHolder.getLocale()));
-        }
-
     }
 
-    public void validateMovingDocumentRequest(String documentName, String warehouseNameFrom, String warehouseNameTo,
-                                              List<MovingDocumentBuilderProductDto> products) {
-
-        if (StringUtils.isEmpty(documentName)) {
-            throw new MovingDocumentValidationException(messageSource.getMessage(
-                    "validation.add.moving.document.invalid.document.name",
-                    null, LocaleContextHolder.getLocale()));
-        }
-
-        if (StringUtils.isEmpty(warehouseNameFrom)) {
-            throw new MovingDocumentValidationException(messageSource.getMessage(
-                    "validation.add.moving.document.invalid.warehouse.from.name",
-                    null, LocaleContextHolder.getLocale()));
-        }
-
-        if (StringUtils.isEmpty(warehouseNameTo)) {
-            throw new MovingDocumentValidationException(messageSource.getMessage(
-                    "validation.add.moving.document.invalid.warehouse.to.name",
-                    null, LocaleContextHolder.getLocale()));
-        }
-
+    private void validateDocumentProducts(List<TransportationDocumentBuilderProductDto> products,
+                                          TransportationDocumentTypeEnum type) {
         if (products == null || products.isEmpty()) {
-            throw new MovingDocumentValidationException(messageSource.getMessage(
-                    "validation.add.moving.document.invalid.products",
+            throw new TransportationDocumentValidationException(messageSource.getMessage(
+                    "validation.add.transportation.document.invalid.products",
                     null, LocaleContextHolder.getLocale()));
         }
 
-        List<MovingDocumentBuilderProductDto> invalidDtoList = products.stream()
-                .filter(MovingDocumentBuilderProductDto::checkFieldsForUploading)
+        List<TransportationDocumentBuilderProductDto> invalidDtoList = products.stream()
+                .filter(product -> isProductInvalid(product, type))
                 .collect(Collectors.toList());
 
         if (!invalidDtoList.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            invalidDtoList.forEach(productMovingDto -> sb.append(productMovingDto.toString()).append("\n"));
-            throw new MovingDocumentValidationException(messageSource.getMessage(
-                    "validation.add.moving.document.invalid.products.fields",
-                    new Object[]{sb.toString()}, LocaleContextHolder.getLocale()));
+            String invalidProductsString = invalidDtoList.stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining("\n"));
+            throw new TransportationDocumentValidationException(messageSource.getMessage(
+                    "validation.add.transportation.document.invalid.products.fields",
+                    new Object[]{invalidProductsString}, LocaleContextHolder.getLocale()));
         }
+    }
 
+    private boolean isProductInvalid(TransportationDocumentBuilderProductDto product, TransportationDocumentTypeEnum type) {
+        if (type.isContainsPrice()) {
+            return product.containsInvalidCommonFields() || product.containsInvalidPriceField();
+        }
+        return product.containsInvalidCommonFields();
+    }
+
+    private void validateWarehouseNames(String warehouseNameFrom, String warehouseNameTo,
+                                        TransportationDocumentTypeEnum type) {
+        switch (type) {
+            case INCOME:
+                checkWarehouseName(warehouseNameTo);
+                break;
+            case SALE:
+                checkWarehouseName(warehouseNameFrom);
+                break;
+            case MOVING:
+                checkWarehouseName(warehouseNameFrom);
+                checkWarehouseName(warehouseNameTo);
+                break;
+            default:
+                throw new TransportationDocumentValidationException(messageSource.getMessage(
+                        "validation.add.transportation.document.invalid.document.type",
+                        null, LocaleContextHolder.getLocale()));
+        }
+    }
+
+    private void checkWarehouseName(String warehouseName) {
+        if (StringUtils.isEmpty(warehouseName)) {
+            throw new TransportationDocumentValidationException(messageSource.getMessage(
+                    "validation.add.transportation.document.invalid.warehouse.name",
+                    null, LocaleContextHolder.getLocale()));
+        }
     }
 }

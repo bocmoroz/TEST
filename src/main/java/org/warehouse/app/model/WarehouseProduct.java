@@ -5,7 +5,6 @@ import lombok.Data;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import java.math.BigDecimal;
 
 @Data
 @Embeddable

@@ -37,5 +37,4 @@ public class ProductEntity {
         this.name = name;
         this.deleted = false;
     }
-
 }

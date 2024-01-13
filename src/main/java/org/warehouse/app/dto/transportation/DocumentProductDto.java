@@ -1,10 +1,13 @@
-package org.warehouse.app.dto.warehouse;
+package org.warehouse.app.dto.transportation;
 
-public class WarehouseProductDto {
+import java.math.BigDecimal;
+
+public class DocumentProductDto {
 
     private String article;
     private String name;
     private Integer count;
+    private BigDecimal price;
 
     public String getArticle() {
         return article;
@@ -28,5 +31,13 @@ public class WarehouseProductDto {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

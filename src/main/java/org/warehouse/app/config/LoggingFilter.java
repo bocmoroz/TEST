@@ -23,7 +23,7 @@ public class LoggingFilter implements Filter {
     @Value("${logging.filter.max.log.lines: 5000}")
     private int maxLogLines;
 
-    private static final String[] FILE_CONTENT_TYPES = {"audio", "video", "image", "multipart", "pdf", "zip", "msword", "octet-stream"};
+    private static final String[] FILE_CONTENT_TYPES = {"audio", "video", "image", "pdf", "octet-stream"};
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

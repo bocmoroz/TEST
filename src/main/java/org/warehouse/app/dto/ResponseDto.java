@@ -1,10 +1,5 @@
 package org.warehouse.app.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
 public class ResponseDto<T> {
 
     private StatusEnum status;
@@ -12,6 +7,12 @@ public class ResponseDto<T> {
     private String message;
 
     public ResponseDto(T body, String message) {
+        this.body = body;
+        this.message = message;
+    }
+
+    public ResponseDto(StatusEnum status, T body, String message) {
+        this.status = status;
         this.body = body;
         this.message = message;
     }
@@ -26,6 +27,18 @@ public class ResponseDto<T> {
 
     public static <T> ResponseDto<T> error(String message) {
         return new ResponseDto<>(StatusEnum.ERROR, null, message);
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public T getBody() {
+        return body;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     public enum StatusEnum {
