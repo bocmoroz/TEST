@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <springProperty scope="context" name="LOG_PATH" source="log.path"/>
+    <springProperty scope="context" name="LOG_PATH" source="log.path.tests"/>
 
     <appender name="WAREHOUSE_FILE_TESTS" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file> ${LOG_PATH}/warehouse-app-tests.log</file>

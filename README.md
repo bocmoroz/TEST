@@ -20,8 +20,8 @@ Possible ways of using:<br/>
 java -jar Warehouse_rest_app-1.0-SNAPSHOT.jar
 ```
 
-The default startup using create-drop for database. If this configuration is not suitable, then there is a file [data.sql](src/main/resources/data.sql) for initialization.
+The default startup using create-drop for database. If this configuration is not suitable, then there is a file [data.sql](warehouse/src/main/resources/data.sql) for initialization.
 
 The Swagger documentation is available at the URL: http://localhost:8080/swagger-ui.html.
 
-UML database link diagram: [UML Diagram](src/main/resources/db/UML_Diagram.png)
+UML database link diagram: [UML Diagram](migrations/src/main/resources/db/UML_Diagram.png)
