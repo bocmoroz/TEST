@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile_db
     restart: on-failure:3
     environment:
+      - TZ=Asia/Bishkek
       - POSTGRES_DB=WarehouseDB
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=PassworD1
@@ -19,6 +20,7 @@ services:
       dockerfile: Dockerfile_app
     restart: on-failure:3
     environment:
+      - TZ=Asia/Bishkek
       - spring.profiles.active=local
     ports:
       - 8080:8080
