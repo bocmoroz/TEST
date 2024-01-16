@@ -56,14 +56,14 @@ public class LoggingFilter implements Filter {
                 request.getMethod(),
                 request.getRemoteAddr(),
                 request.getQueryString(),
-                fileFilter(request.getContentType(), getRequestAsString(request))
+                fileFilter(request.getContentType(), getRequestBodyAsString(request))
         );
     }
 
     private void logResponse(HttpServletResponse response) {
         log.info("Response[status: {} , body: {}]",
                 response.getStatus(),
-                fileFilter(response.getContentType(), getResponseAsString(response))
+                fileFilter(response.getContentType(), getResponseBodyAsString(response))
         );
     }
 
@@ -81,7 +81,7 @@ public class LoggingFilter implements Filter {
         return body;
     }
 
-    private String getRequestAsString(HttpServletRequest request) {
+    private String getRequestBodyAsString(HttpServletRequest request) {
         ContentCachingRequestWrapper wrappedRequest = WebUtils.getNativeRequest(request, ContentCachingRequestWrapper.class);
         if (wrappedRequest != null && wrappedRequest.getContentLength() > 0) {
             try {
@@ -93,7 +93,7 @@ public class LoggingFilter implements Filter {
         return "[unknown]";
     }
 
-    private String getResponseAsString(HttpServletResponse response) {
+    private String getResponseBodyAsString(HttpServletResponse response) {
         ContentCachingResponseWrapper wrappedResponse = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
         if (wrappedResponse != null && wrappedResponse.getContentSize() > 0) {
             try {

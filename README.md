@@ -1,27 +1,17 @@
 # warehouse-rest-app
-Simple CRUD REST API app for products and warehouses.
+Simple REST API app for products, warehouses and transportation documents.
 
 
 ## Installation
 
-Use [maven](https://maven.apache.org/download.cgi) to build the project.<br/>
-Execute next command in the root folder of the project with the pom.xml file:
+Use [Maven](https://maven.apache.org/download.cgi) and [Docker](https://www.docker.com/get-started/) to build and start an app in a container.<br/>
+Execute next command in the root folder of the project:
 
 ```
-mvn clean install
+mvn clean install && docker compose up
 ```
 
-## Using
-Possible ways of using:<br/>
-1. Run the main() method of the Application class in the IDE.
-2. Execute next command in the folder containing the .jar file :
+Swagger documentation is available at the URL: [http://localhost:8080/swagger-ui.html]()
 
-```
-java -jar Warehouse_rest_app-1.0-SNAPSHOT.jar
-```
-
-The default startup using create-drop for database. If this configuration is not suitable, then there is a file [data.sql](warehouse/src/main/resources/data.sql) for initialization.
-
-The Swagger documentation is available at the URL: http://localhost:8080/swagger-ui.html.
-
-UML database link diagram: [UML Diagram](migrations/src/main/resources/db/UML_Diagram.png)
+## Support info
+Pattern for naming migration files: yyyyMMddHHmm_your_name.xml
