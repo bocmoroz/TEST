@@ -1,27 +1,7 @@
-CREATE SEQUENCE IF NOT EXISTS products_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-CREATE SEQUENCE IF NOT EXISTS warehouses_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-CREATE SEQUENCE IF NOT EXISTS warehouse_transportation_documents_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
+CREATE SEQUENCE IF NOT EXISTS products_id_seq;
 CREATE TABLE IF NOT EXISTS products
 (
-    id bigint NOT NULL DEFAULT nextval('product_id_seq'::regclass),
+    id bigint NOT NULL DEFAULT nextval('products_id_seq'::regclass),
     articul character varying(255) COLLATE pg_catalog."default",
     name character varying(255) COLLATE pg_catalog."default",
     deleted boolean NOT NULL,
@@ -32,9 +12,10 @@ CREATE TABLE IF NOT EXISTS products
     CONSTRAINT product_articul_key UNIQUE (articul)
 );
 
+CREATE SEQUENCE IF NOT EXISTS warehouses_id_seq;
 CREATE TABLE IF NOT EXISTS warehouses
 (
-    id bigint NOT NULL DEFAULT nextval('warehouse_id_seq'::regclass),
+    id bigint NOT NULL DEFAULT nextval('warehouses_id_seq'::regclass),
     name character varying(255) COLLATE pg_catalog."default",
     deleted boolean NOT NULL,
     last_change_date timestamp without time zone,
@@ -42,6 +23,7 @@ CREATE TABLE IF NOT EXISTS warehouses
     CONSTRAINT warehouse_name_key UNIQUE (name)
 );
 
+CREATE SEQUENCE IF NOT EXISTS warehouse_transportation_documents_id_seq;
 CREATE TABLE IF NOT EXISTS warehouse_products_count
 (
     warehouse_id bigint NOT NULL,
