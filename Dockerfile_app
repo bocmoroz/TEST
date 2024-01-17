@@ -1,6 +1,18 @@
+# syntax=docker/dockerfile:1
+
+FROM maven:3.8.4 as builder
+WORKDIR /app
+COPY migrations/pom.xml migrations/pom.xml
+COPY warehouse/pom.xml warehouse/pom.xml
+COPY pom.xml .
+RUN --mount=type=cache,target=/root/.m2 mvn dependency:go-offline
+COPY migrations/src /app/migrations/src
+COPY warehouse/src /app/warehouse/src
+RUN --mount=type=cache,target=/root/.m2 mvn clean install -DskipTests=true
+
 FROM openjdk:15-oracle
 WORKDIR /app
-COPY /warehouse/target/warehouse-rest-app.jar /app/warehouse-rest-app.jar
+COPY --from=builder /app/warehouse/target/warehouse-rest-app.jar /app/warehouse-rest-app.jar
 
 EXPOSE 8080
 
