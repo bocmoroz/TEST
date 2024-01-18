@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  database:
+    build:
+      context: .
+      dockerfile: Dockerfile_db
+    restart: on-failure:3
+    environment:
+      - TZ=Asia/Bishkek
+      - POSTGRES_DB=WarehouseDB
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=PassworD1
+    ports:
+      - 5433:5432
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile_app
+    restart: on-failure:3
+    environment:
+      - TZ=Asia/Bishkek
+      - spring.profiles.active=local
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
