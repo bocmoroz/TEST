@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Log in to Docker Hub
+      run: echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
+
+    - name: Build Docker Images
+      run: docker build -f Dockerfile_db -t ${{secrets.DOCKERHUB_USERNAME}}/warehouse-rest-app_db:latest . && docker build -f Dockerfile_app -t ${{secrets.DOCKERHUB_USERNAME}}/warehouse-rest-app_app:latest .
+
+    - name: Push Docker Images to Docker Hub
+      run: docker push ${{secrets.DOCKERHUB_USERNAME}}/warehouse-rest-app_db:latest && docker push ${{secrets.DOCKERHUB_USERNAME}}/warehouse-rest-app_app:latest
