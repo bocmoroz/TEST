@@ -1,1 +1,6 @@
 FROM postgres:11.5
+
+ENV TZ=Asia/Bishkek
+ENV POSTGRES_DB=WarehouseDB
+ENV POSTGRES_USER=admin
+ENV POSTGRES_PASSWORD=PassworD1

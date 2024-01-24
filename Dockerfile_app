@@ -12,6 +12,9 @@ RUN --mount=type=cache,target=/root/.m2 mvn clean install
 
 FROM openjdk:15-oracle
 WORKDIR /app
+ENV TZ=Asia/Bishkek
+ENV SPRING_PROFILES_ACTIVE=local
+
 COPY --from=builder /app/logs_tests /app/logs
 COPY --from=builder /app/warehouse/target/warehouse-rest-app.jar /app/warehouse-rest-app.jar
 
