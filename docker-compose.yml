@@ -6,11 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile_db
     restart: on-failure:3
-    environment:
-      - TZ=Asia/Bishkek
-      - POSTGRES_DB=WarehouseDB
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=PassworD1
     ports:
       - 5433:5432
 
