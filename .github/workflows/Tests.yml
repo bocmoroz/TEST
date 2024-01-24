@@ -1,0 +1,20 @@
+name: Tests
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+jobs:
+  run-tests:
+      runs-on: ubuntu-latest
+  
+      steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Run Tests
+        run: mvn test
