@@ -15,7 +15,6 @@ services:
       dockerfile: Dockerfile_app
     restart: on-failure:3
     environment:
-      - TZ=Asia/Bishkek
       - spring.profiles.active=local
     ports:
       - 8080:8080
